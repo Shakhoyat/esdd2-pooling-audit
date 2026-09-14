@@ -1,5 +1,5 @@
 {
- "git_sha": "3709d69a9fd52f750ea8e9d02ca5c7be7a80b12b",
+ "git_sha": "cdfe0a5891a28110150b174fda163b8691e1ee62",
  "split": "evaluation",
  "seeds": {
   "table2_clustered_bootstrap": 1337,
@@ -41,9 +41,9 @@
  },
  "outputs": {
   "results/artefacts.json": "ab42d688ece9407c051bf93df973372dacf56da9238a5f18642a54e130af67f8",
-  "results/fig_pooling.pdf": "679d973674e6e269ace7a595454f568c029896f0cfc7b9ab087debdfaff6b81b",
+  "results/fig_pooling.pdf": "e4e700ea626e27bba26460f7d0b93229206b0e2f0ae41b00b4d74c50e8e99c37",
   "results/table1.tex": "353b169afce3d6f77ae73daddc8ece901d3ddba034783a97f6d425790588fbd6",
   "results/table2.tex": "f5c0bf3cb550397a7edbb9e7d2322a031ae1332e12ed3c4785e8e8a6aa124339"
  },
- "wall_clock_seconds": 180.5
+ "wall_clock_seconds": 180.7
 }
