@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+data/local/
+*.npy
+*.parquet
+build/
+models/checkpoints/
+build/
+# paper/ holds the generated source and Figure 1; the template and any local build are not ours to ship
+paper/spconf.sty
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/main.pdf

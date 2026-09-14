@@ -1,0 +1,16 @@
+# Tier 0 (CPU verification). Developed and tested on CPython 3.10.12.
+#
+# Python 3.10 or 3.11 is recommended: the pins below have wheels there. On 3.13
+# some of these still build from source, which needs a toolchain.
+#
+# Tier 1 (GPU retraining) additionally needs torch; see scripts/train/README.md.
+numpy==2.1.2
+pandas==2.3.2
+scikit-learn==1.7.1
+matplotlib==3.10.6
+PyYAML==6.0.2
+pytest==8.3.3
+
+# pdftotext (poppler-utils) is needed by check_paper_sync.py and
+# scripts/check_plan_values.py. It is a system package, not a wheel:
+#   apt-get install poppler-utils

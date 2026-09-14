@@ -1,0 +1,41 @@
+# TODO before tagging: settle "Md" vs "Md." for Md Rezwanul Haque (authors 1 and
+# 3 use "Md."), and mark the corresponding author. The same decision must be
+# applied to the paper's \name{} block and the CMS record at the same time --
+# see PUBLISHING.md.
+cff-version: 1.2.0
+message: "If you use this code, please cite the paper below."
+title: "esdd2-pooling-audit: reproduction code for metric identifiability under component pooling"
+type: software
+license: MIT
+repository-code: "https://github.com/REPLACE-WITH-FINAL-URL"
+abstract: >-
+  Recomputes every numeric claim in "Inapplicable Components in Audio
+  Anti-Spoofing: Metric Identifiability under Component Pooling" from per-clip
+  scores, without reading any cached result.
+preferred-citation:
+  type: conference-paper
+  title: "Inapplicable Components in Audio Anti-Spoofing: Metric Identifiability under Component Pooling"
+  year: 2027
+  collection-title: "Proc. IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)"
+  authors:
+    - family-names: Rahman Shujon
+      given-names: "Md. Shakhoyat"
+    - family-names: Mahi
+      given-names: "Khadimul Islam"
+    - family-names: Islam
+      given-names: "Md. Milon"
+    - family-names: Haque
+      given-names: "Md Rezwanul"
+    - family-names: Karray
+      given-names: Fakhri
+authors:
+  - family-names: Rahman Shujon
+    given-names: "Md. Shakhoyat"
+  - family-names: Mahi
+    given-names: "Khadimul Islam"
+  - family-names: Islam
+    given-names: "Md. Milon"
+  - family-names: Haque
+    given-names: "Md Rezwanul"
+  - family-names: Karray
+    given-names: Fakhri

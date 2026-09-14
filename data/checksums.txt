@@ -1,0 +1,9 @@
+# sha256 of the files this repository does NOT redistribute, as we used them.
+# Download them yourself, then compare:  sha256sum -c data/checksums.txt  (from the right directory)
+#
+# CompSpoofV2 (CC BY-NC 4.0, access-gated): https://huggingface.co/datasets/XuepingZhang/ESDD2-CompSpoof-V2
+43f8213724bfd3e2d1bc2c15188bbfdeaeb15e440ac67643a6154c6a1eeb65ac  eval_label.csv
+ce509978535c615f0aa25da8b89d6d044edc4e9929076cceb8fbbf14df128c53  eval_source/metadata/eval.csv
+#
+# ESDD2 baseline repository (CC BY-NC 4.0): submission/prediction.txt
+a22c59510504d58f7176240ef0b22e21236a98344bbca20e952399473d4d77f5  submission/prediction.txt

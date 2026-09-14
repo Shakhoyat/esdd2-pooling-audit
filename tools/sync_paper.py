@@ -1,0 +1,76 @@
+#!/usr/bin/env python3
+"""Copy the paper source into paper/, with every LaTeX comment's content removed.
+
+    python tools/sync_paper.py /path/to/authors/main.tex
+
+The authors' working source carries internal provenance comments. This publishes
+the paper, not those notes: full-line comments are deleted, and an inline comment
+keeps its bare `%` but loses its text. Keeping that `%` matters -- in LaTeX a
+trailing `%` suppresses the line-end space, so deleting it could change the
+typeset output. `\\%` is a literal percent sign and is left alone.
+
+Afterwards it compiles both files and checks their text layers are identical, so
+stripping comments cannot silently change the paper.
+"""
+import argparse
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parents[1]
+INLINE = re.compile(r"(?<!\\)%.*$")
+
+
+def strip(tex: str) -> str:
+    out = []
+    for line in tex.split("\n"):
+        if re.match(r"^\s*%", line):
+            continue
+        out.append(INLINE.sub("%", line).rstrip() if INLINE.search(line) else line.rstrip())
+    return re.sub(r"\n{3,}", "\n\n", "\n".join(out)).strip() + "\n"
+
+
+def pdftext(tex: Path, workdir: Path) -> str:
+    for _ in range(2):
+        subprocess.run(["pdflatex", "-interaction=nonstopmode", tex.name], cwd=workdir,
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    pdf = workdir / tex.with_suffix(".pdf").name
+    return subprocess.run(["pdftotext", str(pdf), "-"], capture_output=True, text=True).stdout
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("source", type=Path)
+    a = ap.parse_args()
+    src = a.source.resolve()
+    stripped = strip(src.read_text())
+    (REPO / "paper").mkdir(exist_ok=True)
+    (REPO / "paper" / "main.tex").write_text(stripped)
+    print(f"  wrote paper/main.tex: {len(stripped.splitlines())} lines "
+          f"(source {len(src.read_text().splitlines())})")
+
+    with tempfile.TemporaryDirectory() as d:
+        d = Path(d)
+        for name in ("spconf.sty", "fig_pooling.pdf"):
+            if (src.parent / name).exists():
+                shutil.copy(src.parent / name, d / name)
+        if not (d / "spconf.sty").exists():
+            print("  spconf.sty not beside the source; skipping the compile-equivalence check")
+            return 0
+        (d / "a").mkdir(); (d / "b").mkdir()
+        for sub in ("a", "b"):
+            for name in ("spconf.sty", "fig_pooling.pdf"):
+                shutil.copy(d / name, d / sub / name)
+        shutil.copy(src, d / "a" / "main.tex")
+        (d / "b" / "main.tex").write_text(stripped)
+        ta, tb = pdftext(d / "a" / "main.tex", d / "a"), pdftext(d / "b" / "main.tex", d / "b")
+        same = ta == tb
+        print(f"  compile-equivalence: text layers {'IDENTICAL' if same else 'DIFFER'}")
+        return 0 if same else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

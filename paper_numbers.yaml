@@ -1,0 +1,203 @@
+# Every numeric literal printed in the paper, with where it comes from.
+#
+# `value` is TRANSCRIBED BY HAND from main.tex at the precision the paper prints.
+# It is deliberately NOT generated from our code: verify.py recomputes each one
+# from per-clip scores and compares, so a generated file would make the check
+# vacuous.
+#
+# tier 0            recomputable on CPU from per-clip scores; verify.py checks it
+# tier 0-data       a count or corpus property; checked against the data files
+# tier 0-published  fixed by a published table, not recomputable without test labels
+# tier 1            needs retraining; verify.py reports it as not checked, with why
+# tier notation     a symbol subscript or an exponent, not a measured quantity
+#
+# `key` is a dotted path into the artefacts recompute.py returns.
+
+meta:
+  reference_step_bootstrap: {scheme: class-stratified clip, draws: 1000, seed: 1337}
+  bootstrap_seed: 1337        # pinned; the intervals are reproducible only at this seed
+  bootstrap_draws: 2000
+  paper: "Inapplicable Components in Audio Anti-Spoofing: Metric Identifiability under Component Pooling"
+  transcribed_from: "paper/merged/main.tex"
+  transcribed_on: "2026-09-11"
+
+numbers:
+
+# ---------------------------------------------------------------- Abstract
+- {id: abs_beats_c0,      value: 0.5382, precision: 4, location: "Abstract",  tier: 0, key: t1.rows.beats_linear.mean.0}
+- {id: abs_beats_c05,     value: 0.1412, precision: 4, location: "Abstract",  tier: 0, key: t1.rows.beats_linear.mean.0.5}
+- {id: abs_consistency,   value: 0.20,   precision: 2, location: "Abstract",  tier: 0, key: cons.pooled_drop}
+
+# ---------------------------------------------------------------- Section 1
+- {id: s1_spread,         value: 0.40,   precision: 2, location: "§1 intro",  tier: 0, key: t1.spread_max}
+- {id: s1_w0_test_pct,    value: 52.8,   precision: 1, location: "§1 setting", tier: 0-published, key: s2.env.w0_pct}
+- {id: s1_err_pooled,     value: 0.2246, precision: 4, location: "§1 contributions", tier: 0, key: t2.env.err_pooled}
+- {id: s1_err_cond,       value: 0.0068, precision: 4, location: "§1 contributions", tier: 0, key: t2.env.err_cond}
+
+# ---------------------------------------------------------------- Section 2
+- {id: s2_collapsible_mp,  value: 1.0,    precision: 1, location: "§2 collapsible: machine precision", tier: 0, key: collap.worst_collapsible_e15, compare: bound_below, printed: false,
+   why: "the claim is machine precision; checked as max collapsible residual < 1e-15"}
+- {id: s2_noncollapse_min, value: 1.4,    precision: 1, location: "§2 non-collapsible floor", tier: 0, key: collap.smallest_non_collapsible_e4, compare: bound_above_reversed,
+   why: "the claim is that the smallest non-collapsible residual is at least 1.4e-4"}
+- {id: s2_n_checks,       value: 14,     precision: 0, location: "§2 fourteen checks", tier: 0, key: collap.n_checks, printed: false,
+   why: "spelled as a word in the paper"}
+- {id: s2_w0_eval_env,    value: 0.5323, precision: 4, location: "§2 baseline row", tier: 0, key: s2.baseline_eval.w0}
+- {id: s2_pub_eval_env,   value: 0.4336, precision: 4, location: "§2 baseline row", tier: 0, key: s2.baseline_eval.published}
+- {id: s2_interval_hi,    value: 0.9271, precision: 4, location: "§2 interval", tier: 0, key: s2.baseline_eval.hi}
+- {id: s2_interval_pct,   value: 93,     precision: 0, location: "§2 interval", tier: 0, key: s2.baseline_eval.width_pct}
+- {id: s2_component_only, value: 0.2090, precision: 4, location: "§2 interval", tier: 0, key: s2.baseline_eval.component_only}
+- {id: s2_pairs,          value: 55,     precision: 0, location: "§2 test split", tier: 0-published, key: s2.env.n_pairs}
+- {id: s2_max_gap_env,    value: 0.3410, precision: 4, location: "§2 criterion", tier: 0-published, key: s2.env.max_gap}
+- {id: s2_max_gap_speech, value: 0.2402, precision: 4, location: "§2 criterion", tier: 0-published, key: s2.speech.max_gap}
+- {id: s2_w0_test_env,    value: 0.5282, precision: 4, location: "§2 criterion", tier: 0-published, key: s2.env.w0}
+- {id: s2_w0_test_speech, value: 0.3961, precision: 4, location: "§2 criterion", tier: 0-published, key: s2.speech.w0}
+- {id: s2_determined,     value: 0,      precision: 0, location: "§2 test split (none of 55)", tier: 0-published, key: s2.env.determined_geometric}
+
+# ---------------------------------------------------------------- Section 3
+- {id: s3_gate_auc,       value: 0.9964, precision: 4, location: "§3.1 applicability signal", tier: 0, key: fmt.gate_auc_full}
+- {id: s3_published,      value: 0.4336, precision: 4, location: "§3.1", tier: 0, key: s3.published_env}
+- {id: s3_target,         value: 0.2090, precision: 4, location: "§3.1", tier: 0, key: s3.component_only}
+- {id: s3_c0,             value: 0.4654, precision: 4, location: "§3.1 c=0", tier: 0, key: s3.c0}
+- {id: s3_c05,            value: 0.1307, precision: 4, location: "§3.1 c=0.5 and oracle", tier: 0, key: s3.c05}
+- {id: s3_free_gate,      value: 0.1355, precision: 4, location: "§3.1 gate from original score", tier: 0, key: s3.free_gate}
+- {id: s3_step_c,         value: 0.0119, precision: 4, location: "§3.1 sweep", tier: 0, key: s3.sweep_step_at_c}
+- {id: s3_step_from,      value: 0.4631, precision: 4, location: "§3.1 sweep", tier: 0, key: s3.sweep_step_from}
+- {id: s3_step_to,        value: 0.1970, precision: 4, location: "§3.1 sweep", tier: 0, key: s3.sweep_step_to}
+- {id: s3_wa,             value: 0.4677, precision: 4, location: "§3.2 Proposition 3", tier: 0, key: s3.wa}
+- {id: s3_floor,          value: 0.1307, precision: 4, location: "§3.2 fixed point", tier: 0, key: s3.prop3_floor}
+
+# ---------------------------------------------------------------- Section 4.1
+- {id: s41_train,         value: 175361, precision: 0, location: "§4.1 training clips", tier: 0, key: counts.train_clips,
+   why: "needs development/metadata/train.csv, inside the 88 GB archive; see data/README.md"}
+- {id: s41_val,           value: 24864,  precision: 0, location: "§4.1 validation clips", tier: 0, key: counts.val_clips,
+   why: "needs development/metadata/val.csv, inside the 88 GB archive; see data/README.md"}
+- {id: s41_eval,          value: 27605,  precision: 0, location: "§4.1 evaluation clips", tier: 0, key: counts.eval_clips}
+- {id: s41_sr,            value: 16,     precision: 0, location: "§4.1 kHz", tier: 0, key: cfg.sample_rate_khz}
+
+# ---------------------------------------------------------------- Table 1 and §4.2
+- {id: t1_prior,          value: 0.32506, precision: 5, location: "Table 1 prior constant", tier: 0, key: t1.prior_env, printed: false,
+   why: "the caption defines prior verbally; the value itself is not printed"}
+- {id: t1_beats_c0,       value: 0.5382, precision: 4, location: "Table 1", tier: 0, key: t1.rows.beats_linear.mean.0}
+- {id: t1_beats_c05,      value: 0.1412, precision: 4, location: "Table 1", tier: 0, key: t1.rows.beats_linear.mean.0.5}
+- {id: t1_beats_prior,    value: 0.1517, precision: 4, location: "Table 1", tier: 0, key: t1.rows.beats_linear.mean.prior}
+- {id: t1_beats_spread,   value: 0.3970, precision: 4, location: "Table 1", tier: 0, key: t1.rows.beats_linear.spread}
+- {id: t1_beats_comp,     value: 0.1632, precision: 4, location: "Table 1", tier: 0, key: t1.rows.beats_linear.component_only}
+- {id: t1_eat_c0,         value: 0.5400, precision: 4, location: "Table 1", tier: 0, key: t1.rows.eat_linear.mean.0}
+- {id: t1_eat_c05,        value: 0.1600, precision: 4, location: "Table 1", tier: 0, key: t1.rows.eat_linear.mean.0.5}
+- {id: t1_eat_prior,      value: 0.1677, precision: 4, location: "Table 1", tier: 0, key: t1.rows.eat_linear.mean.prior}
+- {id: t1_eat_spread,     value: 0.3800, precision: 4, location: "Table 1", tier: 0, key: t1.rows.eat_linear.spread}
+- {id: t1_eat_comp,       value: 0.1900, precision: 4, location: "Table 1", tier: 0, key: t1.rows.eat_linear.component_only}
+- {id: t1_attn_c0,        value: 0.4529, precision: 4, location: "Table 1", tier: 0, key: t1.rows.beats_attentive.mean.0}
+- {id: t1_attn_c05,       value: 0.3515, precision: 4, location: "Table 1", tier: 0, key: t1.rows.beats_attentive.mean.0.5}
+- {id: t1_attn_prior,     value: 0.3561, precision: 4, location: "Table 1", tier: 0, key: t1.rows.beats_attentive.mean.prior}
+- {id: t1_attn_spread,    value: 0.1014, precision: 4, location: "Table 1", tier: 0, key: t1.rows.beats_attentive.spread}
+- {id: t1_attn_comp,      value: 0.1569, precision: 4, location: "Table 1", tier: 0, key: t1.rows.beats_attentive.component_only}
+- {id: t1_twoenc_c0,      value: 0.1041, precision: 4, location: "Table 1", tier: 0, key: t1.rows.two_encoder.mean.0}
+- {id: t1_twoenc_c05,     value: 0.1010, precision: 4, location: "Table 1", tier: 0, key: t1.rows.two_encoder.mean.0.5}
+- {id: t1_twoenc_prior,   value: 0.1016, precision: 4, location: "Table 1", tier: 0, key: t1.rows.two_encoder.mean.prior}
+- {id: t1_twoenc_spread,  value: 0.0031, precision: 4, location: "Table 1", tier: 0, key: t1.rows.two_encoder.spread}
+- {id: t1_twoenc_comp,    value: 0.1559, precision: 4, location: "Table 1", tier: 0, key: t1.rows.two_encoder.component_only}
+- {id: t1_ref_c0,         value: 0.4654, precision: 4, location: "Table 1 reference row", tier: 0, key: t1.rows.reference.mean.0}
+- {id: t1_ref_c05,        value: 0.1307, precision: 4, location: "Table 1 reference row", tier: 0, key: t1.rows.reference.mean.0.5}
+- {id: t1_ref_prior,      value: 0.1307, precision: 4, location: "Table 1 reference row", tier: 0, key: t1.rows.reference.mean.prior}
+- {id: t1_ref_spread,     value: 0.3346, precision: 4, location: "Table 1 reference row", tier: 0, key: t1.rows.reference.spread}
+- {id: t1_ref_comp,       value: 0.2090, precision: 4, location: "Table 1 reference row", tier: 0, key: t1.rows.reference.component_only}
+- {id: t1_ref_step_share,  value: 6,      precision: 0, location: "Table 1 caption, reference c=0 step: share of resamples", tier: 0, key: refstep.low_share_pct}
+- {id: t1_ref_step_draws,  value: 1000,   precision: 0, location: "Table 1 caption, reference c=0 step: resamples", tier: 0, key: refstep.n_draws}
+- {id: t1_ref_step_value,  value: 0.20,   precision: 2, location: "Table 1 caption, reference c=0 step: 'falls to about'", tier: 0, key: refstep.low_median}
+- {id: t1_ref_disp_diff,  value: 0.3347, precision: 4, location: "Table 1 caption, displayed difference", tier: 0, key: t1.rows.reference.displayed_difference}
+- {id: t1_ref_published,  value: 0.4336, precision: 4, location: "Table 1 caption", tier: 0, key: t2.env.pooled}
+- {id: t1_max_sd,         value: 0.0015, precision: 4, location: "Table 1 caption, seed s.d. bound", tier: 0, key: t1.max_seed_sd_excl_attentive_ceil}
+- {id: s42_spread_min,    value: 0.0031, precision: 4, location: "§4.2 range", tier: 0, key: t1.spread_min}
+- {id: s42_spread_max,    value: 0.3970, precision: 4, location: "§4.2 range", tier: 0, key: t1.spread_max}
+- {id: s42_census_cap,    value: 28,     precision: 0, location: "§4.2 census", tier: 0, key: t1.census_captured}
+- {id: s42_census_cells,  value: 39,     precision: 0, location: "§4.2 census", tier: 0, key: t1.census_cells}
+- {id: s42_census_tol,    value: 1.5,    precision: 1, location: "§4.2 census tolerance x1e-4", tier: 0, key: t1.census_max_deviation_e4}
+- {id: s42_half_w0,       value: 0.27,   precision: 2, location: "§4.2 step size w0/2", tier: 0, key: t1.half_w0}
+- {id: s42_attn_lo,       value: 0.1550, precision: 4, location: "§4.2 attentive seeds", tier: 0, key: t1.attn_c05_min}
+- {id: s42_attn_hi,       value: 0.4706, precision: 4, location: "§4.2 attentive seeds", tier: 0, key: t1.attn_c05_max}
+- {id: s42_attn_comp_lo,  value: 0.1545, precision: 4, location: "§4.2 attentive component-only", tier: 0, key: t1.attn_comp_min}
+- {id: s42_attn_comp_hi,  value: 0.1611, precision: 4, location: "§4.2 attentive component-only", tier: 0, key: t1.attn_comp_max}
+- {id: s42_twoenc_bound,  value: 0.026,  precision: 3, location: "§4.2 two-encoder boundary distance", tier: 0, key: t1.twoenc_boundary_distance}
+- {id: s42_twoenc_floor,  value: 0.0032, precision: 4, location: "§4.2 two-encoder distance to floor", tier: 0, key: t1.twoenc_floor_distance}
+- {id: s42_logit_a,       value: 1.22,   precision: 2, location: "§4.2 plan worked example", tier: 0, key: plan.logit_a,
+   why: "needs the cached plan text; run scripts/check_plan_values.py"}
+- {id: s42_logit_b,       value: -1.54,  precision: 2, location: "§4.2 plan worked example", tier: 0, key: plan.logit_b,
+   why: "needs the cached plan text; run scripts/check_plan_values.py"}
+- {id: s42_logit_c,       value: -1.89,  precision: 2, location: "§4.2 plan worked example", tier: 0, key: plan.logit_c,
+   why: "needs the cached plan text; run scripts/check_plan_values.py"}
+
+# ---------------------------------------------------------------- Section 4.3
+- {id: s43_env_comp,      value: 0.2090, precision: 4, location: "§4.3 env component-only", tier: 0, key: abl.env.component_only}
+- {id: s43_speech_comp,   value: 0.1906, precision: 4, location: "§4.3 speech component-only", tier: 0, key: abl.speech.component_only}
+- {id: s43_head_diff,     value: 0.0184, precision: 4, location: "§4.3 head difference", tier: 0, key: abl.decomposition.head_difference}
+- {id: s43_env_dist,      value: 0.2246, precision: 4, location: "§4.3 env distortion", tier: 0, key: abl.env.distortion}
+- {id: s43_speech_dist,   value: 0.0087, precision: 4, location: "§4.3 speech distortion", tier: 0, key: abl.speech.distortion}
+- {id: s43_total,         value: 0.2343, precision: 4, location: "§4.3 decomposition total", tier: 0, key: abl.decomposition.total}
+- {id: s43_pooling_net,   value: 0.2159, precision: 4, location: "§4.3 pooling contribution", tier: 0, key: abl.decomposition.pooling_net}
+- {id: s43_pooling_pct,   value: 92,     precision: 0, location: "§4.3 pooling share", tier: 0, key: abl.decomposition.pooling_pct}
+- {id: s43_w0_env,        value: 0.5323, precision: 4, location: "§4.3 env share", tier: 0, key: abl.env.w0}
+- {id: s43_w0_speech,     value: 0.3991, precision: 4, location: "§4.3 speech share", tier: 0, key: abl.speech.w0}
+- {id: s43_wgap_env,      value: 0.3381, precision: 4, location: "§4.3 weighted FRR gap, env", tier: 0, key: abl.env.weighted_frr_gap}
+- {id: s43_wgap_speech,   value: 0.0169, precision: 4, location: "§4.3 weighted FRR gap, speech", tier: 0, key: abl.speech.weighted_frr_gap}
+- {id: s43_drop,          value: 0.20,   precision: 2, location: "§4.3 consistency experiment", tier: 0, key: cons.pooled_drop}
+- {id: s43_auc_before,    value: 0.10,   precision: 2, location: "§4.3 class-0 AUC before", tier: 0, key: cons.auc_masked}
+- {id: s43_auc_after,     value: 0.71,   precision: 2, location: "§4.3 class-0 AUC after", tier: 0, key: cons.auc_consistent}
+- {id: s43_floor_gap,     value: 0.008,  precision: 3, location: "§4.3 distance to Prop 3 floor", tier: 0, key: cons.max_distance_to_floor, compare: bound_above,
+   why: "the paper states a bound; the measured maximum is 0.0075"}
+- {id: s43_layer_lo,      value: 7,      precision: 0, location: "§4.3 BEATs layer", tier: 0, key: cfg.layer_lo}
+- {id: s43_layer_hi,      value: 10,     precision: 0, location: "§4.3 BEATs layers 7-10", tier: 0, key: cfg.layer_hi}
+
+# ---------------------------------------------------------------- Section 4.4
+- {id: s44_header_f1,     value: 0.9635, precision: 4, location: "§4.4 sample-rate rule F1", tier: 0, key: fmt.header_rule_f1}
+- {id: s44_not16k_pct,    value: 93,     precision: 0, location: "§4.4 share not 16 kHz mono", tier: 0, key: counts.inapplicable_not_16k_mono_pct}
+- {id: s44_fm_inap,       value: 525,    precision: 0, location: "§4.4 format-matched inapplicable rows", tier: 0, key: fmt.n_fm_inapplicable}
+- {id: s44_fm_app,        value: 20150,  precision: 0, location: "§4.4 format-matched applicable rows", tier: 0, key: fmt.n_fm_applicable}
+- {id: s44_header_auc_fm, value: 0.5000, precision: 4, location: "§4.4 sample-rate rule AUC on the matched subset", tier: 0, key: fmt.header_auc_format_matched}
+- {id: s44_gate_auc_fm,   value: 0.9957, precision: 4, location: "§4.4 submitted-score gate, matched subset", tier: 0, key: fmt.gate_auc_format_matched}
+- {id: s44_gate_auc_full, value: 0.9964, precision: 4, location: "§4.4 submitted-score gate, full split", tier: 0, key: fmt.gate_auc_full}
+- {id: s44_published,     value: 0.4336, precision: 4, location: "§4.4 charged EER", tier: 0, key: t2.env.pooled}
+
+# ---------------------------------------------------------------- Table 2 and §4.5
+- {id: t2_env_pooled,     value: 0.4336, precision: 4, location: "Table 2 env pooled", tier: 0, key: t2.env.pooled}
+- {id: t2_env_cond,       value: 0.2022, precision: 4, location: "Table 2 env conditioned", tier: 0, key: t2.env.cond}
+- {id: t2_env_comp,       value: 0.2090, precision: 4, location: "Table 2 env component-only", tier: 0, key: t2.env.comp}
+- {id: t2_env_err_p,      value: 0.2246, precision: 4, location: "Table 2 env pooled error", tier: 0, key: t2.env.err_pooled}
+- {id: t2_env_err_c,      value: 0.0068, precision: 4, location: "Table 2 env conditioned error", tier: 0, key: t2.env.err_cond}
+- {id: t2_sp_pooled,      value: 0.1993, precision: 4, location: "Table 2 speech pooled", tier: 0, key: t2.speech.pooled}
+- {id: t2_sp_cond,        value: 0.1886, precision: 4, location: "Table 2 speech conditioned", tier: 0, key: t2.speech.cond}
+- {id: t2_sp_comp,        value: 0.1906, precision: 4, location: "Table 2 speech component-only", tier: 0, key: t2.speech.comp}
+- {id: t2_sp_err_p,       value: 0.0087, precision: 4, location: "Table 2 speech pooled error", tier: 0, key: t2.speech.err_pooled}
+- {id: t2_sp_err_c,       value: 0.0019, precision: 4, location: "Table 2 speech conditioned error", tier: 0, key: t2.speech.err_cond}
+- {id: t2_ci_env_p_lo,    value: 0.217,  precision: 3, location: "Table 2 caption CI", tier: 0, key: t2.env.ci_err_pooled.0}
+- {id: t2_ci_env_p_hi,    value: 0.232,  precision: 3, location: "Table 2 caption CI", tier: 0, key: t2.env.ci_err_pooled.1}
+- {id: t2_ci_sp_p_lo,     value: 0.006,  precision: 3, location: "Table 2 caption CI", tier: 0, key: t2.speech.ci_err_pooled.0}
+- {id: t2_ci_sp_p_hi,     value: 0.011,  precision: 3, location: "Table 2 caption CI", tier: 0, key: t2.speech.ci_err_pooled.1}
+- {id: t2_ci_env_c_lo,    value: 0.005,  precision: 3, location: "Table 2 caption CI", tier: 0, key: t2.env.ci_err_cond.0}
+- {id: t2_ci_env_c_hi,    value: 0.009,  precision: 3, location: "Table 2 caption CI", tier: 0, key: t2.env.ci_err_cond.1}
+- {id: t2_ci_sp_c_lo,     value: 0.000,  precision: 3, location: "Table 2 caption CI", tier: 0, key: t2.speech.ci_err_cond.0}
+- {id: t2_ci_sp_c_hi,     value: 0.003,  precision: 3, location: "Table 2 caption CI", tier: 0, key: t2.speech.ci_err_cond.1}
+- {id: t2_ci_level,       value: 95,     precision: 0, location: "Table 2 caption, confidence level", tier: 0, key: t2.ci_level}
+- {id: t2_draws,          value: 2000,   precision: 0, location: "Table 2 caption resamples", tier: 0, key: t2.env.n_draws}
+- {id: t2_shared_clusters, value: 80,    precision: 0, location: "Table 2 caption shared-source rows", tier: 0, key: t2.env.n_shared_rows}
+- {id: t2_rows,           value: 27605,  precision: 0, location: "Table 2 caption row count", tier: 0, key: counts.eval_clips}
+- {id: s45_red_env,       value: 97,     precision: 0, location: "§4.5 reduction, env", tier: 0, key: t2.env.reduction_pct}
+- {id: s45_red_speech,    value: 78,     precision: 0, location: "§4.5 reduction, speech", tier: 0, key: t2.speech.reduction_pct}
+- {id: s45_precision,     value: 0.999,  precision: 3, location: "§4.5 gate precision", tier: 0, key: t2.gate.precision}
+- {id: s45_recall,        value: 0.943,  precision: 3, location: "§4.5 gate recall", tier: 0, key: t2.gate.recall}
+- {id: s45_sweep_lo,      value: 0.0036, precision: 4, location: "§4.5 threshold sweep at 0.1", tier: 0, key: t2.threshold_sweep.0.1}
+- {id: s45_sweep_hi,      value: 0.0096, precision: 4, location: "§4.5 threshold sweep at 0.9", tier: 0, key: t2.threshold_sweep.0.9}
+
+# ---------------------------------------------------------------- Section 5
+- {id: s5_spread,         value: 0.3970, precision: 4, location: "§5 conclusion", tier: 0, key: t1.spread_max}
+- {id: s5_pairs,          value: 55,     precision: 0, location: "§5 conclusion", tier: 0-published, key: s2.env.n_pairs}
+
+# ---------------------------------------------------------------- Figure 1
+- {id: fig_area_pub,      value: 0.4322, precision: 4, location: "Fig. 1 annotation", tier: 0, key: fig1.area_pub}
+- {id: fig_w0,            value: 0.5323, precision: 4, location: "Fig. 1 annotation", tier: 0, key: fig1.w0}
+- {id: fig_area_0,        value: 0.0000, precision: 4, location: "Fig. 1 annotation", tier: 0, key: fig1.area_0}
+- {id: fig_wa,            value: 0.4677, precision: 4, location: "Fig. 1 annotation", tier: 0, key: fig1.wa}
+- {id: fig_area_a,        value: 0.9241, precision: 4, location: "Fig. 1 annotation", tier: 0, key: fig1.area_a}
+- {id: fig_crossing,      value: 0.538,  precision: 3, location: "Fig. 1 annotation", tier: 0, key: fig1.eer_pub}
+- {id: fig_weighted_mean, value: 0.609,  precision: 3, location: "Fig. 1 annotation", tier: 0, key: fig1.eer_weighted_mean}
+- {id: fig_seed,          value: 1337,   precision: 0, location: "Fig. 1 caption", tier: 0, key: fig1.seed}
