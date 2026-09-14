@@ -11,7 +11,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from . import bounds, data, pooling, regimes, sweep
+from . import bounds, data, pooling, regimes, sharpness, sweep
 from .consistency import consistency
 from .bootstrap import clustered_ci
 from .eer import (AXES, component_eer, declared_prior, eer_from_scores,
@@ -20,6 +20,8 @@ from .eer import (AXES, component_eer, declared_prior, eer_from_scores,
 SYSTEMS_TABLE1 = ["beats_linear", "eat_linear", "beats_attentive", "two_encoder"]
 COLLAPSIBILITY_SYSTEMS = SYSTEMS_TABLE1 + ["sslam_linear", "xlsr_linear"]  # + baseline = 7
 CONSTANTS = ("0", "0.5", "prior")
+GATE_THRESHOLD = 0.5            # score an axis over {x : gamma(x) >= 1/2}
+SWEEP_THRESHOLDS = (0.1, 0.9)   # the gate-threshold sweep the paper reports
 
 
 def _constants(labels, axis):
@@ -99,7 +101,7 @@ def table2(n_draws: int = 2000, seed: int = 1337) -> dict:
     labels = idx.label_id.to_numpy()
     base = data.load_baseline(idx)
     gamma = sweep.applicability_gate(base.s_original.to_numpy(float))
-    gate = gamma >= 0.5
+    gate = gamma >= GATE_THRESHOLD
     score = {"env": base.s_env.to_numpy(float), "speech": base.s_speech.to_numpy(float)}
     z = (labels != 0).astype(int)
 
@@ -128,7 +130,7 @@ def table2(n_draws: int = 2000, seed: int = 1337) -> dict:
                        n_selected=int(gate.sum()), n_applicable=int((z == 1).sum()))
     res["threshold_sweep"] = {
         t: abs(component_eer(labels[gamma >= t], score["env"][gamma >= t], "env")
-               - component_eer(labels, score["env"], "env")) for t in (0.1, 0.9)}
+               - component_eer(labels, score["env"], "env")) for t in SWEEP_THRESHOLDS}
     return res
 
 
@@ -141,6 +143,7 @@ def s2_bounds() -> dict:
     out = {}
     for axis, col in (("env", "eer_env_test"), ("speech", "eer_speech_test")):
         out[axis] = bounds.pairwise_determined(tab[col].tolist(), W0[axis])
+    out["max_lower_endpoint"] = max(lo for axis in ("env", "speech") for lo, _ in out[axis]["intervals"])
     idx = data.load_index()
     labels = idx.label_id.to_numpy()
     base = data.load_baseline(idx)
@@ -153,6 +156,11 @@ def s2_bounds() -> dict:
     # gives 0.9272 and answers a question nobody can ask.
     pub = round(pub_exact, 4)
     lo, hi = bounds.interval(pub, w0_eval)
+    # Both directions of Theorem 2, and the lower-endpoint witness under the
+    # stronger conditioning on the reference submission's other published cells.
+    out["sharpness"] = dict(attainment=sharpness.attainment_grid(),
+                            containment=sharpness.containment(),
+                            witness=sharpness.lower_endpoint_witness(labels, pub))
     out["baseline_eval"] = dict(w0=w0_eval, published=pub, published_exact=pub_exact,
                                 lo=lo, hi=hi,
                                 width_pct=100 * (hi - lo),
@@ -171,10 +179,11 @@ def s2_collapsibility() -> dict:
     """
     idx = data.load_index()
     labels = idx.label_id.to_numpy()
-    coll, noncoll, cells = [], [], 0
+    coll, noncoll, area, cells = [], [], [], 0
     def add(sc, axis):
         nonlocal cells
         r = pooling.collapsibility_residuals(labels, sc, axis)
+        area.append(r["AUC"])
         coll.extend(r[k] for k in pooling.SUMMARIES_COLLAPSIBLE)
         noncoll.extend(r[k] for k in pooling.SUMMARIES_NOT)
         cells += 1
@@ -187,6 +196,7 @@ def s2_collapsibility() -> dict:
         add(base[c].to_numpy(float), axis)
     return dict(n_systems=len(COLLAPSIBILITY_SYSTEMS) + 1, n_checks=cells,
                 worst_collapsible_residual=max(coll),
+                worst_area_residual=max(area),
                 smallest_non_collapsible_residual=min(noncoll),
                 median_non_collapsible_residual=float(np.median(noncoll)))
 
@@ -202,6 +212,7 @@ def s3_gates_and_sweep() -> dict:
                                    include_inapplicable=True)
     gated = gamma * s_env + (1 - gamma) * 0.5
     out = dict(c0=fill(0.0), c05=fill(0.5), oracle=fill(0.5),
+               rank_above=fill(float(s_env.max()) + 1.0),
                free_gate=component_eer(labels, gated, "env", include_inapplicable=True),
                component_only=component_eer(labels, s_env, "env"),
                prop3_floor=sweep.prop3_floor(labels, s_env, "env"),
@@ -331,15 +342,24 @@ def all_artefacts(n_draws: int = 2000, seed: int = 1337) -> dict:
     t1.update(_two_encoder_geometry())
 
     collap["worst_collapsible_e15"] = collap["worst_collapsible_residual"] * 1e15
+    collap["worst_area_e16"] = collap["worst_area_residual"] * 1e16
+    s2["sharpness"]["attainment"]["worst_e12"] = s2["sharpness"]["attainment"]["worst_residual"] * 1e12
+    s2["baseline_eval"]["w0_pct"] = s2["baseline_eval"]["w0"] * 100
+    t1.update(_logit_ranges())
     collap["smallest_non_collapsible_e4"] = collap["smallest_non_collapsible_residual"] * 1e4
     s2["env"]["w0_pct"] = s2["env"]["w0"] * 100
     s3["published_env"] = t2["env"]["pooled"]
     for axis in ("env", "speech"):
         t2[axis]["n_shared_rows"] = counts["eval_clips"] - t2[axis]["n_clusters"]
     t2["ci_level"] = 95
+    settings = dict(c_mid=float(_constants(np.array([0, 1, 3]), "env")["0.5"]),
+                    gate_threshold=GATE_THRESHOLD,
+                    sweep_lo=SWEEP_THRESHOLDS[0], sweep_hi=SWEEP_THRESHOLDS[1],
+                    n_seeds=len(data.load_system("beats_linear", data.load_index())["seeds"]))
 
     return dict(counts=counts, t1=t1, t2=t2, s2=s2, collap=collap, s3=s3,
-                abl=abl, fmt=fmt, fig1=fig, cons=cons, plan=plan, cfg=cfg, refstep=refstep)
+                abl=abl, fmt=fmt, fig1=fig, cons=cons, plan=plan, cfg=cfg, refstep=refstep,
+                settings=settings)
 
 
 def _ceil_to(x: float, nd: int) -> float:
@@ -370,6 +390,18 @@ def _two_encoder_geometry() -> dict:
     # Both are stated in the paper as BOUNDS ("within x"), so they are rounded up.
     return dict(twoenc_boundary_distance=_ceil_to(float(max(bnd)), 3),
                 twoenc_floor_distance=_ceil_to(max(abs(v - f) for v in m.values()), 4))
+
+
+def _logit_ranges() -> dict:
+    """Environmental score range of the two logit-valued systems, applicable and
+    spoofed clips only (the inapplicable rows are replaced by c), over all seeds."""
+    idx = data.load_index()
+    labels = idx.label_id.to_numpy()
+    out = {}
+    for tag, name in (("attn", "beats_attentive"), ("twoenc", "two_encoder")):
+        sc = data.load_system(name, idx)["scores"][:, labels != 0, 2].astype(float)
+        out[f"range_{tag}_lo"], out[f"range_{tag}_hi"] = float(sc.min()), float(sc.max())
+    return out
 
 
 def reference_c0_step(n_draws: int = 1000, seed: int = 1337) -> dict:

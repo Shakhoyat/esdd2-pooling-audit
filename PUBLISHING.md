@@ -1,24 +1,23 @@
 # Publishing this repository
 
-Nothing here has been pushed or tagged. These are the commands for Shujon to run.
+`main` is pushed to `github.com/Shakhoyat/esdd2-pooling-audit`, private. Nothing is tagged. These
+are the commands for Shujon to run.
 
 ---
 
-## TODO before any of this — one decision, three files
+## Still open before tagging — corresponding author and ORCiDs
 
-**"Md" or "Md."?** Author 4 is `Md Rezwanul Haque` in the paper (no full stop)
-while authors 1 and 3 use `Md.`. **And who is the corresponding author?** The
-paper marks none, and the CMS requires one.
+**"Md" or "Md."** is settled: author 4 is `Md Rezwanul Haque` by his own usage, authors 1 and 3
+are `Md.`, and the paper, `CITATION.cff` and the CMS record must all keep that difference.
 
-Both answers have to land in three places at once, or the submission record, the
-citation file and the PDF will disagree:
+**Corresponding author and ORCiDs** are not settled. Every author needs a validated ORCiD in the
+CMS (a missing one withdraws the submission). The same answers go in three places:
 
-- [ ] `CITATION.cff` — two `given-names` entries, and add the corresponding author
-- [ ] `icassp2027/paper/merged/main.tex` — the `\name{}` block
+- [ ] `CITATION.cff` — `email:` on the corresponding author, `orcid:` on every author
+- [ ] the paper's `\name{}` block, if the corresponding author is to be marked there
 - [ ] the CMS submission record
 
-Ask Rezwan which spelling he uses. Do this before tagging; a tag is meant to be
-the thing the paper points at, and a name fix afterwards means retagging.
+A tag is meant to be the thing the paper points at, so do this before tagging.
 
 ---
 
@@ -57,19 +56,19 @@ The order matters: the URL has to be in the PDF **before** the PDF is final, and
 the tag has to sit on the commit that the final PDF was checked against. Nothing
 is recompiled after the sync check.
 
-- [ ] **(a) Repository exists and `main` is pushed, still private.** The URL is
+- [x] **(a) Repository exists and `main` is pushed, still private.** The URL is
       now fixed and will not change.
-- [ ] **(b) Put the real URL in the paper.** §4.1 reads `github.com/REPLACE`.
-      Replace it with the repository URL.
+- [x] **(b) The real URL is in the paper**, at the end of the abstract, and in
+      `CITATION.cff`.
 - [ ] **(c) Produce the final PDF.** Compile, and treat this file as frozen.
 - [ ] **(d) Sync check against that exact PDF:**
       ```bash
       python check_paper_sync.py /path/to/final/main.pdf
       ```
-      Direction (a) must be **0**. Direction (b) should contain only affiliation
-      superscripts and exponents — read the contexts and confirm nothing real is
-      in it. Also run `make verify` (every entry verified, 0 failed), `make test` (all pass) and
-      `make manifest` (0 problems).
+      Both directions must be **0**: every listed value appears in the PDF, and
+      every numeric literal in the PDF is listed. Also run `make verify` (0 failed),
+      `make test` (all pass), `ESDD2_PAPER_PDF=/path/to/final/main.pdf make gate`
+      (all pass) and `make manifest` (0 problems).
 - [ ] **(e) Tag the commit that passed (d), and make the repository public.**
       ```bash
       git tag -a v1.0-submission -m "ICASSP 2027 submission"

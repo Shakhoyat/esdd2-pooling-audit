@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Copy the paper source into paper/, with every LaTeX comment's content removed.
+"""Copy the paper source into paper/, with comments and the embedded style file removed.
 
     python tools/sync_paper.py /path/to/authors/main.tex
 
@@ -8,6 +8,11 @@ the paper, not those notes: full-line comments are deleted, and an inline commen
 keeps its bare `%` but loses its text. Keeping that `%` matters -- in LaTeX a
 trailing `%` suppresses the line-end space, so deleting it could change the
 typeset output. `\\%` is a literal percent sign and is left alone.
+
+The authors' single-file source embeds the ICASSP kit's spconf.sty in a
+filecontents* block so that Overleaf needs nothing else. That file carries no
+licence statement and is not redistributed here (paper/README.md), so the block is
+removed: the published copy expects spconf.sty from the author kit beside it.
 
 Afterwards it compiles both files and checks their text layers are identical, so
 stripping comments cannot silently change the paper.
@@ -22,9 +27,11 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 INLINE = re.compile(r"(?<!\\)%.*$")
+EMBEDDED_STY = re.compile(r"\\begin\{filecontents\*?\}(\[[^\]]*\])?\{spconf\.sty\}.*?\\end\{filecontents\*?\}\n?", re.S)
 
 
 def strip(tex: str) -> str:
+    tex = EMBEDDED_STY.sub("", tex)
     out = []
     for line in tex.split("\n"):
         if re.match(r"^\s*%", line):

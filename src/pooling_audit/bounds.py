@@ -32,6 +32,7 @@ def pairwise_determined(published: list[float], w0: float) -> dict:
     mism = sum(1 for i, j in pairs
                if disjoint(iv[i], iv[j]) != (abs(published[i] - published[j]) > w0))
     gaps = [abs(published[i] - published[j]) for i, j in pairs]
-    return dict(n_systems=len(published), n_pairs=len(pairs), determined_geometric=geo,
+    return dict(n_systems=len(published), n_pairs=len(pairs), pair_size=2,
+                determined_geometric=geo,
                 determined_criterion=crit, mismatches=mism, max_gap=max(gaps), w0=w0,
                 intervals=iv)

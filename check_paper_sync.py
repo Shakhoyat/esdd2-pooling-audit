@@ -25,9 +25,24 @@ import yaml
 
 # Structure is stripped by CONTEXT rather than by ignoring digit ranges: a blanket
 # "ignore small integers" rule would also hide a real claim that happens to be small.
-CITATION = re.compile(r"\[[\d,\s\u2013-]+\]")        # [8], [2-4], [1, 5]
+CITATION = re.compile(                                # [8], [2-4], [1, 5], [8, Chs. 17-18], [7, \u00a76.4]
+    r"\[\d+(?:\s*[,\u2013-]\s*\d+)*(?:,\s*(?:\u00a7\s?[\d.]+|Chs?\.\s?[\d\u2013-]+|pp?\.\s?[\d\u2013-]+))?\]")
+EXPONENT = re.compile(r"10\s?[\u2212-]\s?\d+")         # 10^-12 typeset as "10-12": a scale, not a claim
+# Formula notation, each pattern for one typeset shape. These are the unit and
+# exponent digits of the proofs and definitions, never a measured value; every
+# pattern requires its operator context, so a bare "1" in prose is still caught.
+MATH_NOTATION = [
+    re.compile(r"(?<![\w.])1\s?\u2212"),                  # 1 - w0, 1 - gamma
+    re.compile(r"\u2212\s?1(?![\w.])"),                   # g^-1, k^-1 (inverses)
+    re.compile(r"[=<\u2264]\s?1(?![\w.])"),               # = 1, < 1, <= 1
+    re.compile(r"\(\s?0,\s?1\)|\bmin 1,"),                 # (0, 1); min(1, ...)
+    re.compile(r"\u222b\ufe01?\s?1"),                      # integral from 0 to 1
+    re.compile(r"\)\s?2(?=\s[A-Z])"),                     # (1 - w)^2 D
+    re.compile(r"(?<=\bI )4(?=\s?\.)"),                   # I^4
+    re.compile(r"\u2265\s?12\s?\}"),                       # >= 1/2 }, the fraction typeset as "12"
+]
 SECTION_REF = re.compile(r"\u00a7\s?\d+(\.\d+)?")     # section 4.2
-FIGTAB_REF = re.compile(r"(?:Fig\.|Figure|Table|Theorem|Proposition|Eq\.)\s?\d+")
+FIGTAB_REF = re.compile(r"(?:Fig\.|Figure|Table|Theorem|Proposition|Eq\.|Section)\s?\d+")
 EQN_NUMBER = re.compile(r"\(\d\)")                    # equation (1), (2), (3)
 SECTION_HEAD = re.compile(r"(?m)^\s*\d+(\.\d+)?\.\s")
 
@@ -39,15 +54,20 @@ def pdf_text(pdf: Path) -> str:
 
 
 def body_text(raw: str) -> str:
-    """Everything before the bibliography; reference entries are not claims."""
+    """From the abstract to the bibliography.
+
+    The title block carries affiliation marks and the bibliography carries volume
+    and page numbers; neither is a claim.
+    """
+    j = raw.upper().find("ABSTRACT")
     i = raw.upper().rfind("REFERENCES")
-    return raw[:i] if i > 0 else raw
+    return raw[max(j, 0):i if i > 0 else len(raw)]
 
 
 def strip_structure(text: str) -> str:
     """Remove citation markers, cross-references and equation numbers."""
     text = SECTION_HEAD.sub(" ", text)
-    for pat in (CITATION, SECTION_REF, FIGTAB_REF, EQN_NUMBER):
+    for pat in (CITATION, SECTION_REF, FIGTAB_REF, EQN_NUMBER, EXPONENT, *MATH_NOTATION):
         text = pat.sub(" ", text)
     return text
 
@@ -81,7 +101,8 @@ def main() -> int:
         v = e["value"]
         s = f"{v:.{e['precision']}f}" if isinstance(v, float) else str(v)
         s_plain = s.lstrip("-")
-        pat = re.escape(s_plain) + r"(?![0-9])"
+        # bounded on BOTH sides: "80" must not match inside "0.1580", nor "7" inside "0.7"
+        pat = r"(?<![0-9.])" + re.escape(s_plain) + r"(?![0-9])"
         if not re.search(pat, flat):
             # integers may be typeset with a thousands separator
             alt = f"{int(v):,}" if isinstance(v, int) else None
