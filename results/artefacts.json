@@ -36,6 +36,8 @@
   "n_systems": 7,
   "smallest_non_collapsible_e4": 1.4242505353323498,
   "smallest_non_collapsible_residual": 0.00014242505353323498,
+  "worst_area_e16": 2.220446049250313,
+  "worst_area_residual": 2.220446049250313e-16,
   "worst_collapsible_e15": 0.2220446049250313,
   "worst_collapsible_residual": 2.220446049250313e-16
  },
@@ -240,6 +242,7 @@
    "published": 0.4336,
    "published_exact": 0.4336190199928597,
    "w0": 0.532309889325241,
+   "w0_pct": 53.230988932524106,
    "width_pct": 92.71096183206107
   },
   "env": {
@@ -295,8 +298,35 @@
    "mismatches": 0,
    "n_pairs": 55,
    "n_systems": 11,
+   "pair_size": 2,
    "w0": 0.5282467763767187,
    "w0_pct": 52.82467763767187
+  },
+  "max_lower_endpoint": 0.0,
+  "sharpness": {
+   "attainment": {
+    "n_constructions": 150,
+    "n_infeasible": 0,
+    "n_settings": 6,
+    "points_per_interval": 25,
+    "worst_e12": 5.551115123125783e-05,
+    "worst_residual": 5.551115123125783e-17
+   },
+   "containment": {
+    "seed": 11,
+    "trials": 5000,
+    "worst_violation": 0.0
+   },
+   "witness": {
+    "at_lower": true,
+    "component_only": 0.0,
+    "found": true,
+    "interval_hi": 0.9271096183206108,
+    "interval_lo": 0.0,
+    "pooled": 0.43361689365142697,
+    "u": 0.6953420694506839,
+    "upper_claimed": false
+   }
   },
   "speech": {
    "determined_criterion": 0,
@@ -351,6 +381,7 @@
    "mismatches": 0,
    "n_pairs": 55,
    "n_systems": 11,
+   "pair_size": 2,
    "w0": 0.39605811344941777
   }
  },
@@ -362,6 +393,7 @@
   "oracle": 0.13073715794779175,
   "prop3_floor": 0.13073715794779175,
   "published_env": 0.4336190199928597,
+  "rank_above": 0.13073715794779175,
   "sweep_closest_at_c": 0.0119139607995748,
   "sweep_closest_gap": 0.01199947223207698,
   "sweep_closest_value": 0.19698963867946323,
@@ -373,6 +405,13 @@
   "sweep_step_to": 0.19698963867946323,
   "sweep_target": 0.2089891109115402,
   "wa": 0.46769011067475896
+ },
+ "settings": {
+  "c_mid": 0.5,
+  "gate_threshold": 0.5,
+  "n_seeds": 3,
+  "sweep_hi": 0.9,
+  "sweep_lo": 0.1
  },
  "t1": {
   "attn_c05_max": 0.47060035019005814,
@@ -387,6 +426,10 @@
   "max_seed_sd_excl_attentive": 0.0014699383036031082,
   "max_seed_sd_excl_attentive_ceil": 0.0015,
   "prior_env": 0.3250620347394541,
+  "range_attn_hi": 24.875,
+  "range_attn_lo": -25.0,
+  "range_twoenc_hi": 34.447261810302734,
+  "range_twoenc_lo": -26.03845977783203,
   "rows": {
    "beats_attentive": {
     "component_only": 0.1569159744050292,
