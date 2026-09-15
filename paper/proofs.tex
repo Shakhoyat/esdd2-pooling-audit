@@ -1,6 +1,6 @@
 \documentclass[10pt]{article}
 \usepackage[T1]{fontenc}
-\usepackage{amsmath,amssymb,amsthm,url,cite}
+\usepackage{amsmath,amssymb,amsthm,url,cite,booktabs}
 \renewcommand{\rmdefault}{ptm}\renewcommand{\sfdefault}{phv}\renewcommand{\ttdefault}{pcr}  % as spconf.sty: no bitmap fonts
 \usepackage[margin=1in]{geometry}
 \title{Structural-Zero Components in Audio Anti-Spoofing: Metric Identifiability Under Component Pooling\\[4pt]\large Proofs and passages omitted from the ICASSP 2027 version}
@@ -51,15 +51,15 @@ cost and Youden's index admit no aggregation rule.}
 
 \begin{proof}
 Let $A$, $B$ and $S$ join $(0,0)$ to $(1,1)$ by straight segments through the interior breakpoints
-$(\tfrac25,\tfrac35)$; $(\tfrac3{11},\tfrac12),(\tfrac25,\tfrac35)$; and $(\tfrac27,1)$. All
+$(2/5,3/5)$; $(3/11,1/2),(2/5,3/5)$; and $(2/7,1)$. All
 three are concave, hence equal to their own convex hulls. Curves $A$ and $B$ share an equal error
-rate of $\tfrac25$ yet differ as curves ($\mathrm{AUC}$ $\tfrac35$ against $\tfrac{34}{55}$), and
-mixing each with the \emph{same} $S$ at $w=\tfrac12$ gives $\tfrac27$ and $\tfrac3{11}$; both
+rate of $2/5$ yet differ as curves ($\mathrm{AUC}$ $3/5$ against $34/55$), and
+mixing each with the \emph{same} $S$ at $w=1/2$ gives $2/7$ and $3/11$; both
 pooled crossings fall on curve vertices, so they are exact rather than interpolated. A second
-triple, through $(\tfrac13,\tfrac23)$; $(\tfrac16,\tfrac12),(\tfrac13,\tfrac23)$; and
-$(\tfrac15,\tfrac45)$, shares a minimum detection cost and an index of $\tfrac13$ at equal priors
-and unit costs, and pools to $\tfrac7{24}$ against $\tfrac4{15}$ and to $\tfrac5{12}$ against
-$\tfrac7{15}$. Each pair contradicts the Lemma, so no $\varphi$ exists; on the same curves every
+triple, through $(1/3,2/3)$; $(1/6,1/2),(1/3,2/3)$; and
+$(1/5,4/5)$, shares a minimum detection cost and an index of $1/3$ at equal priors
+and unit costs, and pools to $7/24$ against $4/15$ and to $5/12$ against
+$7/15$. Each pair contradicts the Lemma, so no $\varphi$ exists; on the same curves every
 weighted area has residual exactly zero. A third triple, in the released code, separates the minimum detection cost at the ASVspoof 5 cost parameters.
 \end{proof}
 
@@ -121,7 +121,26 @@ where the net contribution from the pooling convention alone ($0.2246 - 0.0087 =
 
 \subsection*{Applicability-conditioned evaluation (paper \S4.4)}
 
-Table~2 outlines what an external reader can recover from outside the scoring
+\setcounter{table}{1}
+\begin{table}[h]
+\centering
+\caption{\textbf{Recoverability asymmetry.} Reference system, evaluation split, no retraining.
+Absolute error is the deviation from the component-only value, computed before rounding.}
+\label{tab:endtoend}
+\setlength{\tabcolsep}{5pt}\small
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+& & applic.\ & component & \multicolumn{2}{c}{abs.\ error} \\
+\cmidrule(lr){5-6}
+axis & pooled & cond. & only & pooled & cond. \\
+\midrule
+environment & $0.4336$ & $0.2022$ & $0.2090$ & $0.2246$ & $\mathbf{0.0068}$ \\
+speech      & $0.1993$ & $0.1886$ & $0.1906$ & $0.0087$ & $\mathbf{0.0019}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:endtoend} outlines what an external reader can recover from outside the scoring
 process. We set $\gamma_a = 1-\sigma(s_{\mathrm{o}})$, with $s_{\mathrm{o}}$ the submitted
 \texttt{original} score and $\sigma$ the logistic function, and score each axis over $\{x:\gamma_a(x)\ge\tfrac12\}$, at a precision of $0.999$ and a recall of
 $0.943$. The absolute deviation from the component-only value falls by $97\%$ on the environmental

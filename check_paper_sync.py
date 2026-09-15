@@ -44,7 +44,7 @@ MATH_NOTATION = [
 SECTION_REF = re.compile(r"\u00a7\s?\d+(\.\d+)?")     # section 4.2
 FIGTAB_REF = re.compile(r"(?:Fig\.|Figure|Table|Theorem|Proposition|Eq\.|Section)\s?\d+")
 EQN_NUMBER = re.compile(r"\(\d\)")                    # equation (1), (2), (3)
-SECTION_HEAD = re.compile(r"(?m)^\s*\d+(\.\d+)?\.\s")
+SECTION_HEAD = re.compile(r"(?m)^\s*\d+(\.\d+)?\.\s|^\s*\d+\s+(?=[A-Z][a-z])")   # "4. RESULTS" (spconf) or "4 Passages" (article)
 
 def pdf_text(pdf: Path) -> str:
     out = subprocess.run(["pdftotext", str(pdf), "-"], capture_output=True, text=True)
@@ -68,6 +68,7 @@ def body_text(raw: str, start: str = "ABSTRACT") -> str:
     return re.sub(r"(?m)^\s*\d+\.\s+REFERENCES\s*$", " ", text)
 
 
+INLINE_FRACTION = re.compile(r"(?<![\w./])(\d+)\s?/\s?(\d+)(?![\w/]|\.\d)")   # "3/11" as typeset inline
 TFRAC = re.compile(r"\\tfrac\s*(\{\d+\}|\d)\s*(\{\d+\}|\d)")
 
 
@@ -141,8 +142,10 @@ def main() -> int:
         if e.get("printed") is False:
             continue          # a checked quantity the paper does not print as a digit
         v = e["value"]
-        if isinstance(v, str) and "/" in v:     # a \\tfrac: checked in the source, not the text layer
-            if v not in fracs:
+        if isinstance(v, str) and "/" in v:
+            # inline fractions are read from the text layer; a stacked \\tfrac only from the source
+            in_text = any(f"{n}/{d}" == v for n, d in INLINE_FRACTION.findall(flat))
+            if not (in_text or v in fracs):
                 missing.append((e["id"], v, e["location"]))
             continue
         s = f"{v:.{e['precision']}f}" if isinstance(v, float) else str(v)
@@ -168,7 +171,10 @@ def main() -> int:
         if lit["context"] not in flat:
             missing.append((lit["token"], lit["token"], f"literature: {lit['context']}"))
         listed.add(lit["token"])
-    unlisted_fracs = fracs - {e["value"] for e in spec if isinstance(e["value"], str)}
+    listed_fracs = {e["value"] for e in spec if isinstance(e["value"], str)}
+    unlisted_fracs = fracs - listed_fracs
+    # a listed inline fraction is one literal, not two integers; an unlisted one stays visible as its parts
+    scan = INLINE_FRACTION.sub(lambda m: " " if f"{m.group(1)}/{m.group(2)}" in listed_fracs else m.group(0), scan)
     for f in sorted(unlisted_fracs):
         missing.append(("(unlisted fraction)", f, "\\tfrac in main.tex with no YAML entry"))
     r0, r1 = fraction_region(scan)

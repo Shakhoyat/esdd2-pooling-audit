@@ -48,10 +48,14 @@ def test_claim(entry, artefacts):
                 f"\n  key            : {entry['key']}")
 
 
-@pytest.mark.parametrize("name", ["table1.tex", "table2.tex"])
-def test_table_rows_are_verbatim_in_the_paper(name):
-    """Every generated table row must appear, character for character, in paper/main.tex."""
-    frag, paper = RESULTS / name, REPO / "paper" / "main.tex"
+@pytest.mark.parametrize("name,document", [("table1.tex", "main.tex"), ("table2.tex", "proofs.tex")])
+def test_table_rows_are_verbatim_in_the_paper(name, document):
+    """Every generated table row must appear, character for character, where the table is printed.
+
+    Table 1 is in the paper. Table 2 was folded into a sentence of the paper's Section 4.4 to meet the
+    page limit (its numbers are checked there through paper_numbers.yaml) and survives whole in PROOFS.pdf.
+    """
+    frag, paper = RESULTS / name, REPO / "paper" / document
     if not frag.exists() or not paper.exists():
         pytest.skip("results or paper/main.tex absent")
     norm = lambda s: re.sub(r"\s+", " ", s).strip()

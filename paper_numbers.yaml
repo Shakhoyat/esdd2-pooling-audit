@@ -23,7 +23,7 @@ meta:
   # Dates and counts that trace to a cited source rather than to a computation.
   literature_literals:
     - {token: "2019", context: "since 2019", source: "kinnunen2020tdcf; ASVspoof 2019 ranked on minimum normalised t-DCF"}
-  transcribed_on: "2026-09-15"
+  transcribed_on: "2026-09-15 (freeze)"
 
 numbers:
 
@@ -237,16 +237,16 @@ numbers:
 - {id: s43_spread,        value: 0.40,   precision: 2, location: "§4.3 moving by", tier: 0, key: t1.spread_max}
 
 # ---------------------------------------------------------------- Table 2 caption and body
-- {id: t2_env_pooled,     value: 0.4336, precision: 4, location: "Table 2 env pooled", tier: 0, key: t2.env.pooled}
-- {id: t2_env_cond,       value: 0.2022, precision: 4, location: "Table 2 env conditioned", tier: 0, key: t2.env.cond}
-- {id: t2_env_comp,       value: 0.2090, precision: 4, location: "Table 2 env component-only", tier: 0, key: t2.env.comp}
-- {id: t2_env_err_p,      value: 0.2246, precision: 4, location: "Table 2 env pooled error", tier: 0, key: t2.env.err_pooled}
-- {id: t2_env_err_c,      value: 0.0068, precision: 4, location: "Table 2 env conditioned error", tier: 0, key: t2.env.err_cond}
-- {id: t2_sp_pooled,      value: 0.1993, precision: 4, location: "Table 2 speech pooled", tier: 0, key: t2.speech.pooled}
-- {id: t2_sp_cond,        value: 0.1886, precision: 4, location: "Table 2 speech conditioned", tier: 0, key: t2.speech.cond}
-- {id: t2_sp_comp,        value: 0.1906, precision: 4, location: "Table 2 speech component-only", tier: 0, key: t2.speech.comp}
-- {id: t2_sp_err_p,       value: 0.0087, precision: 4, location: "Table 2 speech pooled error", tier: 0, key: t2.speech.err_pooled}
-- {id: t2_sp_err_c,       value: 0.0019, precision: 4, location: "Table 2 speech conditioned error", tier: 0, key: t2.speech.err_cond}
+- {id: t2_env_pooled,     value: 0.4336, precision: 4, location: "Table 2 env pooled", tier: 0, key: t2.env.pooled, document: [paper, extended]}
+- {id: t2_env_cond,       value: 0.2022, precision: 4, location: "Table 2 env conditioned", tier: 0, key: t2.env.cond, document: [paper, extended]}
+- {id: t2_env_comp,       value: 0.2090, precision: 4, location: "Table 2 env component-only", tier: 0, key: t2.env.comp, document: [paper, extended]}
+- {id: t2_env_err_p,      value: 0.2246, precision: 4, location: "Table 2 env pooled error", tier: 0, key: t2.env.err_pooled, document: [paper, extended]}
+- {id: t2_env_err_c,      value: 0.0068, precision: 4, location: "Table 2 env conditioned error", tier: 0, key: t2.env.err_cond, document: [paper, extended]}
+- {id: t2_sp_pooled,      value: 0.1993, precision: 4, location: "Table 2 speech pooled", tier: 0, key: t2.speech.pooled, document: [paper, extended]}
+- {id: t2_sp_cond,        value: 0.1886, precision: 4, location: "Table 2 speech conditioned", tier: 0, key: t2.speech.cond, document: [paper, extended]}
+- {id: t2_sp_comp,        value: 0.1906, precision: 4, location: "Table 2 speech component-only", tier: 0, key: t2.speech.comp, document: [paper, extended]}
+- {id: t2_sp_err_p,       value: 0.0087, precision: 4, location: "Table 2 speech pooled error", tier: 0, key: t2.speech.err_pooled, document: [paper, extended]}
+- {id: t2_sp_err_c,       value: 0.0019, precision: 4, location: "Table 2 speech conditioned error", tier: 0, key: t2.speech.err_cond, document: [paper, extended]}
 
 # ---------------------------------------------------------------- Section 4.4
 - {id: s44_header_f1,     value: 0.9635, precision: 4, location: "§4.4 sample-rate rule F1", tier: 0, key: fmt.header_rule_f1}
