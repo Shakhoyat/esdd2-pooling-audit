@@ -39,6 +39,7 @@ manifest:
 	@echo "added would be missing from it."
 	git add -A
 	$(PY) tools/manifest.py --write
+	git add MANIFEST.sha256
 	$(PY) tools/manifest.py --check
 
 regenerate:
