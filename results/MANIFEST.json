@@ -1,5 +1,5 @@
 {
- "git_sha": "8dd1a6fd47e5817ef9f63536322a37b3f4bde3c3",
+ "git_sha": "32a1bba857890f0b21eff5c70b7fcaed2ea1720c",
  "split": "evaluation",
  "seeds": {
   "table2_clustered_bootstrap": 1337,
@@ -19,7 +19,7 @@
   "data/local/baseline_scores.txt": "a22c59510504d58f7176240ef0b22e21236a98344bbca20e952399473d4d77f5",
   "data/local/eval_index.csv": "26e4a6030625ca7ebd8e383d551c6672690ada3ea39dcef52feef39c1f955436",
   "data/published/esdd2_overview_table.csv": "4088c3fe4a0abc9be5b6d22b43f1f168e8eaf0968636ab82435c6f2112d1e74d",
-  "paper_numbers.yaml": "58468e3c6b28eb6ef9ffda14742cfba00eb907d63988fa620fbcdc3e7124791d",
+  "paper_numbers.yaml": "768fa4c29281abd5d422cbbbf50ce77273c5c3664bb84f7d16f7e60574c5dea0",
   "scores/beats_attentive.npz": "fa4a25087a6d59bc87632c23916b980bde632b41c0e7cc9fac5c55532deb8388",
   "scores/beats_linear.npz": "6d470174e7a240de3ffa37ee4057796d35daeb288e72f30740e1496304867f1b",
   "scores/consistency/layer7_C_1337.npz": "99a05172bcdaa4371560f3382ea3df00a5390529dcfafa4421db2b477bb6310e",
@@ -40,10 +40,10 @@
   "scores/xlsr_linear.npz": "acde5103d9e8e2c0b9e426b618ab59c4837c4965cca55c4665f68cbd54ecaab0"
  },
  "outputs": {
-  "results/artefacts.json": "f83ee5deb4f5e9aee97bd99b2212ed4fc0e9d9bdff98564a02416b6d30b6038f",
-  "results/fig_pooling.pdf": "a9c119884056ecfefecd81cc06452a6d77cf570c7f2e8d8ee2965464655bf452",
+  "results/artefacts.json": "ce1a90c6f29e6ffa67354a5ea2212c236837c2d6eee73798644260e006de7fb2",
+  "results/fig_pooling.pdf": "be39d9fbcdb50cf042ec122247854ee70d25d41251e21c05f93e8f3bbd89ddba",
   "results/table1.tex": "353b169afce3d6f77ae73daddc8ece901d3ddba034783a97f6d425790588fbd6",
   "results/table2.tex": "f5c0bf3cb550397a7edbb9e7d2322a031ae1332e12ed3c4785e8e8a6aa124339"
  },
- "wall_clock_seconds": 183.6
+ "wall_clock_seconds": 185.0
 }

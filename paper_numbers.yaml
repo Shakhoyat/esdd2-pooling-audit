@@ -20,7 +20,10 @@ meta:
   bootstrap_draws: 2000
   paper: "Structural-Zero Components in Audio Anti-Spoofing: Metric Identifiability Under Component Pooling"
   transcribed_from: "paper/main.tex"
-  transcribed_on: "2026-09-14"
+  # Dates and counts that trace to a cited source rather than to a computation.
+  literature_literals:
+    - {token: "2019", context: "since 2019", source: "kinnunen2020tdcf; ASVspoof 2019 ranked on minimum normalised t-DCF"}
+  transcribed_on: "2026-09-15"
 
 numbers:
 
@@ -40,13 +43,13 @@ numbers:
 - {id: s1_w0_eval,        value: 0.5323, precision: 4, location: "§1 setting", tier: 0, key: s2.baseline_eval.w0}
 
 # ---------------------------------------------------------------- Figure 1 (caption, then the figure's own annotation)
-- {id: fig_cap_area_pub,  value: 0.432,  precision: 3, location: "Fig. 1 caption", tier: 0, key: fig1.area_pub}
-- {id: fig_cap_w0,        value: 0.532,  precision: 3, location: "Fig. 1 caption", tier: 0, key: fig1.w0}
-- {id: fig_cap_area_0,    value: 0.000,  precision: 3, location: "Fig. 1 caption", tier: 0, key: fig1.area_0}
-- {id: fig_cap_wa,        value: 0.468,  precision: 3, location: "Fig. 1 caption", tier: 0, key: fig1.wa}
-- {id: fig_cap_area_a,    value: 0.924,  precision: 3, location: "Fig. 1 caption", tier: 0, key: fig1.area_a}
-- {id: fig_cap_crossing,  value: 0.538,  precision: 3, location: "Fig. 1 caption", tier: 0, key: fig1.eer_pub}
-- {id: fig_cap_wmean,     value: 0.609,  precision: 3, location: "Fig. 1 caption", tier: 0, key: fig1.eer_weighted_mean}
+- {id: fig_cap_area_pub,  value: 0.4322, precision: 4, location: "Fig. 1 caption", tier: 0, key: fig1.area_pub}
+- {id: fig_cap_w0,        value: 0.5323, precision: 4, location: "Fig. 1 caption", tier: 0, key: fig1.w0}
+- {id: fig_cap_area_0,    value: 0.0000, precision: 4, location: "Fig. 1 caption", tier: 0, key: fig1.area_0}
+- {id: fig_cap_wa,        value: 0.4677, precision: 4, location: "Fig. 1 caption", tier: 0, key: fig1.wa}
+- {id: fig_cap_area_a,    value: 0.9241, precision: 4, location: "Fig. 1 caption", tier: 0, key: fig1.area_a}
+- {id: fig_cap_crossing,  value: 0.5380, precision: 4, location: "Fig. 1 caption", tier: 0, key: fig1.eer_pub}
+- {id: fig_cap_wmean,     value: 0.6089, precision: 4, location: "Fig. 1 caption", tier: 0, key: fig1.eer_weighted_mean}
 - {id: fig_cap_seed,      value: 1337,   precision: 0, location: "Fig. 1 caption", tier: 0, key: fig1.seed}
 - {id: fig_area_pub,      value: 0.4322, precision: 4, location: "Fig. 1 annotation", tier: 0, key: fig1.area_pub}
 - {id: fig_w0,            value: 0.5323, precision: 4, location: "Fig. 1 annotation", tier: 0, key: fig1.w0}
@@ -59,12 +62,12 @@ numbers:
 # ---------------------------------------------------------------- Section 2
 - {id: s2_collapsible_mp, value: 1.0,    precision: 1, location: "§2 collapsible residual below 1e-15", tier: 0, key: collap.worst_collapsible_e15, compare: bound_below, printed: false,
    why: "printed as the bound 10^-15; checked as max collapsible residual x 1e15 <= 1"}
-- {id: s2_noncollapse_min, value: 1.4,   precision: 1, location: "§2 non-collapsible residual at least 1.4e-4", tier: 0, key: collap.smallest_non_collapsible_e4, compare: bound_above_reversed}
+- {id: s2_noncollapse_min, value: 1.0,   precision: 1, location: "§2 non-collapsible residual exceeds 1e-4", tier: 0, key: collap.smallest_non_collapsible_e4, compare: bound_above_reversed, printed: false,
+   why: "printed as the bound 10^-4; checked as smallest non-collapsible residual x 1e4 >= 1 (measured 1.42)"}
 - {id: s2_n_checks,       value: 14,     precision: 0, location: "§2 fourteen checks", tier: 0, key: collap.n_checks, printed: false,
    why: "spelled as a word in the paper"}
 - {id: s2_n_systems_coll, value: 7,      precision: 0, location: "§2 the seven systems", tier: 0, key: collap.n_systems, printed: false,
    why: "spelled as a word in the paper"}
-- {id: s2_area_worst,     value: 2.22,   precision: 2, location: "§2 largest area residual x1e-16", tier: 0, key: collap.worst_area_e16}
 - {id: s2_containment,    value: 0.0,    precision: 1, location: "§2 Theorem 2: containment checked in the released code", tier: 0, key: s2.sharpness.containment.worst_violation, compare: bound_below, printed: false,
    why: "stated in words; checked as zero violations over random admissible systems"}
 - {id: s2_attainment,     value: 1.0,    precision: 1, location: "§2 Theorem 2: every sampled value realised to 1e-12", tier: 0, key: s2.sharpness.attainment.worst_e12, compare: bound_below, printed: false,
@@ -73,12 +76,14 @@ numbers:
    why: "the paper says a witness is exhibited; this is the published value it reproduces"}
 - {id: s2_witness_comp,   value: 0.0000, precision: 4, location: "§2 lower-endpoint witness sits at the lower endpoint", tier: 0, key: s2.sharpness.witness.component_only, printed: false,
    why: "the paper says a witness is exhibited; this is its component-only value, the lower endpoint"}
-- {id: s2_w0_eval_env,    value: 0.5323, precision: 4, location: "§2 baseline row", tier: 0, key: s2.baseline_eval.w0}
-- {id: s2_pub_eval_env,   value: 0.4336, precision: 4, location: "§2 baseline row", tier: 0, key: s2.baseline_eval.published}
+- {id: s2_table1_rows,    value: 5,      precision: 0, location: "§2 the five in Table 1", tier: 0, key: t1_meta.n_rows, printed: false,
+   why: "spelled as a word in the paper"}
+- {id: s2_w0_eval_env,    value: 0.5323, precision: 4, location: "§2 baseline row", tier: 0, key: s2.baseline_eval.w0, document: [paper, extended]}
+- {id: s2_pub_eval_env,   value: 0.4336, precision: 4, location: "§2 baseline row", tier: 0, key: s2.baseline_eval.published, document: [paper, extended]}
 - {id: s2_interval_lo,    value: 0,      precision: 0, location: "§2 interval lower end", tier: 0, key: s2.baseline_eval.lo}
-- {id: s2_interval_hi,    value: 0.9271, precision: 4, location: "§2 interval", tier: 0, key: s2.baseline_eval.hi}
-- {id: s2_interval_pct,   value: 93,     precision: 0, location: "§2 interval share of the range", tier: 0, key: s2.baseline_eval.width_pct}
-- {id: s2_component_only, value: 0.2090, precision: 4, location: "§2 interval contains the true value", tier: 0, key: s2.baseline_eval.component_only}
+- {id: s2_interval_hi,    value: 0.9271, precision: 4, location: "§2 interval", tier: 0, key: s2.baseline_eval.hi, document: [paper, extended]}
+- {id: s2_interval_pct,   value: 93,     precision: 0, location: "§2 interval share of the range", tier: 0, key: s2.baseline_eval.width_pct, document: [paper, extended]}
+- {id: s2_component_only, value: 0.2090, precision: 4, location: "§2 interval contains the true value", tier: 0, key: s2.baseline_eval.component_only, document: [paper, extended]}
 - {id: s2_n_systems,      value: 11,     precision: 0, location: "§2 test split, eleven systems", tier: 0-published, key: s2.env.n_systems}
 - {id: s2_binom_k,        value: 2,      precision: 0, location: "§2 binomial (11 choose 2)", tier: 0-published, key: s2.env.pair_size}
 - {id: s2_pairs,          value: 55,     precision: 0, location: "§2 test split pairs", tier: 0-published, key: s2.env.n_pairs}
@@ -88,8 +93,32 @@ numbers:
    why: "stated as 'none'"}
 - {id: s2_lower_endpoint, value: 0,      precision: 0, location: "§2 every interval has lower endpoint 0", tier: 0-published, key: s2.max_lower_endpoint}
 
+# ---------------------------------------------------------------- Section 2, Proposition 2
+# Stacked fractions: the text layer cannot show them, so check_paper_sync.py checks these in the
+# LaTeX source, and verify.py / test_claims compare them exactly against pooling_audit.witness.
+- {id: p2_eer_bp_x,       value: "2/5",   precision: 0, location: "Prop 2 proof, A and B breakpoint (2/5, 3/5); EER of A and B", tier: 0, key: witness.eer.values.A.EER, document: [paper, extended]}
+- {id: p2_eer_bp_y,       value: "3/5",   precision: 0, location: "Prop 2 proof, breakpoint y; AUC of A", tier: 0, key: witness.eer.values.A.AUC, document: [paper, extended]}
+- {id: p2_eer_B_x,        value: "3/11",  precision: 0, location: "Prop 2 proof, B breakpoint (3/11, 1/2)", tier: 0, key: witness.eer.breakpoints.B.0.0}
+- {id: p2_half,           value: "1/2",   precision: 0, location: "Prop 2 proof, B breakpoint y and w = 1/2", tier: 0, key: witness.eer.breakpoints.B.0.1, document: [paper, extended]}
+- {id: p2_eer_S_x,        value: "2/7",   precision: 0, location: "Prop 2 proof, S breakpoint (2/7, 1); pooled EER of A|S", tier: 0, key: witness.eer.values.A|S.EER}
+- {id: p2_eer_B_eer,      value: "2/5",   precision: 0, location: "Prop 2 proof, EER of B", tier: 0, key: witness.eer.values.B.EER}
+- {id: p2_eer_B_auc,      value: "34/55", precision: 0, location: "Prop 2 proof, AUC of B", tier: 0, key: witness.eer.values.B.AUC}
+- {id: p2_eer_pooled_B,   value: "3/11",  precision: 0, location: "Prop 2 proof, pooled EER of B|S", tier: 0, key: witness.eer.values.B|S.EER}
+- {id: p2_dcf_bp,         value: "1/3",   precision: 0, location: "Prop 2 proof, second triple breakpoint x; shared minDCF and J", tier: 0, key: witness.dcf_j.values.A.minDCF, document: [paper, extended]}
+- {id: p2_dcf_bp_y,       value: "2/3",   precision: 0, location: "Prop 2 proof, second triple breakpoint y", tier: 0, key: witness.dcf_j.breakpoints.A.0.1, document: [paper, extended]}
+- {id: p2_dcf_B_x,        value: "1/6",   precision: 0, location: "Prop 2 proof, B breakpoint (1/6, 1/2)", tier: 0, key: witness.dcf_j.breakpoints.B.0.0}
+- {id: p2_dcf_S_x,        value: "1/5",   precision: 0, location: "Prop 2 proof, S breakpoint (1/5, 4/5)", tier: 0, key: witness.dcf_j.breakpoints.S.0.0}
+- {id: p2_dcf_S_y,        value: "4/5",   precision: 0, location: "Prop 2 proof, S breakpoint y", tier: 0, key: witness.dcf_j.breakpoints.S.0.1}
+- {id: p2_j_shared,       value: "1/3",   precision: 0, location: "Prop 2 proof, shared Youden index", tier: 0, key: witness.dcf_j.values.B.J, document: [paper, extended]}
+- {id: p2_dcf_pooled_A,   value: "7/24",  precision: 0, location: "Prop 2 proof, pooled minDCF A|S", tier: 0, key: witness.dcf_j.values.A|S.minDCF}
+- {id: p2_dcf_pooled_B,   value: "4/15",  precision: 0, location: "Prop 2 proof, pooled minDCF B|S", tier: 0, key: witness.dcf_j.values.B|S.minDCF}
+- {id: p2_j_pooled_A,     value: "5/12",  precision: 0, location: "Prop 2 proof, pooled Youden A|S", tier: 0, key: witness.dcf_j.values.A|S.J}
+- {id: p2_j_pooled_B,     value: "7/15",  precision: 0, location: "Prop 2 proof, pooled Youden B|S", tier: 0, key: witness.dcf_j.values.B|S.J}
+- {id: p2_asvspoof5_sep,  value: 1,       precision: 0, location: "Prop 2 proof, third triple separates minDCF at ASVspoof 5 costs", tier: 0, key: witness.asvspoof5.concave, printed: false,
+   why: "stated in words; the triple is WITNESSES['asvspoof5'], asserted in tests/test_prop2_witness.py"}
+
 # ---------------------------------------------------------------- Section 3
-- {id: s3_gate_auc,       value: 0.9964, precision: 4, location: "§3.1 applicability signal", tier: 0, key: fmt.gate_auc_full}
+- {id: s3_gate_auc,       value: 0.9964, precision: 4, location: "§3.1 applicability signal", tier: 0, key: fmt.gate_auc_full, document: [extended]}
 - {id: s3_published,      value: 0.4336, precision: 4, location: "§3.1 published pooled EER", tier: 0, key: s3.published_env}
 - {id: s3_target,         value: 0.2090, precision: 4, location: "§3.1 component-only EER", tier: 0, key: s3.component_only}
 - {id: s3_c0,             value: 0.4654, precision: 4, location: "§3.1 c=0", tier: 0, key: s3.c0}
@@ -173,20 +202,26 @@ numbers:
 - {id: s42_twoenc_bound,  value: 0.026,  precision: 3, location: "§4.2 two-encoder boundary distance", tier: 0, key: t1.twoenc_boundary_distance}
 - {id: s42_twoenc_floor,  value: 0.0032, precision: 4, location: "§4.2 two-encoder distance to floor", tier: 0, key: t1.twoenc_floor_distance}
 
+- {id: s42_mindcf_pooled, value: 0.9994, precision: 4, location: "§4.2 pooled minDCF at ASVspoof 5 costs", tier: 0, key: cost.pooled_minDCF}
+- {id: s42_mindcf_comp,   value: 0.5865, precision: 4, location: "§4.2 component-only minDCF at ASVspoof 5 costs", tier: 0, key: cost.component_minDCF}
+- {id: s42_mindcf_resid,  value: 0.19,   precision: 2, location: "§4.2 minDCF residual against the weighted mean", tier: 0, key: cost.residual_minDCF}
+- {id: s42_auc_resid,     value: 1.0,    precision: 1, location: "§4.2 every area residual below 1e-15", tier: 0, key: cost.residual_auc_abs_e15, compare: bound_below, printed: false,
+   why: "printed as the bound 10^-15"}
+
 # ---------------------------------------------------------------- Section 4.3
-- {id: s43_env_comp,      value: 0.2090, precision: 4, location: "§4.3 env component-only", tier: 0, key: abl.env.component_only}
-- {id: s43_speech_comp,   value: 0.1906, precision: 4, location: "§4.3 speech component-only", tier: 0, key: abl.speech.component_only}
-- {id: s43_head_diff,     value: 0.0184, precision: 4, location: "§4.3 head difference", tier: 0, key: abl.decomposition.head_difference}
-- {id: s43_env_dist,      value: 0.2246, precision: 4, location: "§4.3 env distortion", tier: 0, key: abl.env.distortion}
-- {id: s43_speech_dist,   value: 0.0087, precision: 4, location: "§4.3 speech distortion", tier: 0, key: abl.speech.distortion}
-- {id: s43_total,         value: 0.2343, precision: 4, location: "§4.3 decomposition total", tier: 0, key: abl.decomposition.total}
-- {id: s43_eq_pooling,    value: 0.2159, precision: 4, location: "§4.3 equation (4) pooling term", tier: 0, key: abl.decomposition.pooling_net}
-- {id: s43_eq_head,       value: 0.0184, precision: 4, location: "§4.3 equation (4) intrinsic term", tier: 0, key: abl.decomposition.head_difference}
-- {id: s43_eq_total,      value: 0.2343, precision: 4, location: "§4.3 equation (4) total", tier: 0, key: abl.decomposition.total}
-- {id: s43_net_env,       value: 0.2246, precision: 4, location: "§4.3 pooling alone, env term", tier: 0, key: abl.env.distortion}
-- {id: s43_net_speech,    value: 0.0087, precision: 4, location: "§4.3 pooling alone, speech term", tier: 0, key: abl.speech.distortion}
-- {id: s43_pooling_net,   value: 0.2159, precision: 4, location: "§4.3 pooling alone", tier: 0, key: abl.decomposition.pooling_net}
-- {id: s43_pooling_pct,   value: 92,     precision: 0, location: "§4.3 pooling share", tier: 0, key: abl.decomposition.pooling_pct, compare: bound_above_reversed,
+- {id: s43_env_comp,      value: 0.2090, precision: 4, location: "§4.3 env component-only", tier: 0, key: abl.env.component_only, document: [paper, extended]}
+- {id: s43_speech_comp,   value: 0.1906, precision: 4, location: "§4.3 speech component-only", tier: 0, key: abl.speech.component_only, document: [paper, extended]}
+- {id: s43_head_diff,     value: 0.0184, precision: 4, location: "§4.3 head difference", tier: 0, key: abl.decomposition.head_difference, document: [paper, extended]}
+- {id: s43_env_dist,      value: 0.2246, precision: 4, location: "§4.3 env distortion", tier: 0, key: abl.env.distortion, document: [paper, extended]}
+- {id: s43_speech_dist,   value: 0.0087, precision: 4, location: "§4.3 speech distortion", tier: 0, key: abl.speech.distortion, document: [paper, extended]}
+- {id: s43_total,         value: 0.2343, precision: 4, location: "§4.3 decomposition total", tier: 0, key: abl.decomposition.total, document: [paper, extended]}
+- {id: s43_eq_pooling,    value: 0.2159, precision: 4, location: "§4.3 equation (4) pooling term", tier: 0, key: abl.decomposition.pooling_net, document: [paper, extended]}
+- {id: s43_eq_head,       value: 0.0184, precision: 4, location: "§4.3 equation (4) intrinsic term", tier: 0, key: abl.decomposition.head_difference, document: [paper, extended]}
+- {id: s43_eq_total,      value: 0.2343, precision: 4, location: "§4.3 equation (4) total", tier: 0, key: abl.decomposition.total, document: [paper, extended]}
+- {id: s43_net_env,       value: 0.2246, precision: 4, location: "§4.3 pooling alone, env term", tier: 0, key: abl.env.distortion, document: [paper, extended]}
+- {id: s43_net_speech,    value: 0.0087, precision: 4, location: "§4.3 pooling alone, speech term", tier: 0, key: abl.speech.distortion, document: [paper, extended]}
+- {id: s43_pooling_net,   value: 0.2159, precision: 4, location: "§4.3 pooling alone", tier: 0, key: abl.decomposition.pooling_net, document: [paper, extended]}
+- {id: s43_pooling_pct,   value: 92,     precision: 0, location: "§4.3 pooling share", tier: 0, key: abl.decomposition.pooling_pct, compare: bound_above_reversed, document: [paper, extended],
    why: "the paper says 'over 92%'; the measured share is 92.14"}
 - {id: s43_w0_speech,     value: 0.3991, precision: 4, location: "§4.3 speech share", tier: 0, key: abl.speech.w0}
 - {id: s43_wgap_speech,   value: 0.0169, precision: 4, location: "§4.3 weighted FRR gap, speech", tier: 0, key: abl.speech.weighted_frr_gap}
@@ -197,21 +232,11 @@ numbers:
    why: "spelled as a word in the paper"}
 - {id: s43_auc_before,    value: 0.10,   precision: 2, location: "§4.3 class-0 AUC before", tier: 0, key: cons.auc_masked}
 - {id: s43_auc_after,     value: 0.71,   precision: 2, location: "§4.3 class-0 AUC after", tier: 0, key: cons.auc_consistent}
-- {id: s43_floor_gap,     value: 0.008,  precision: 3, location: "§4.3 within the Prop 3 floor", tier: 0, key: cons.max_distance_to_floor, compare: bound_above,
+- {id: s43_floor_gap,     value: 0.008,  precision: 3, location: "§4.3 within the Prop 4 floor", tier: 0, key: cons.max_distance_to_floor, compare: bound_above,
    why: "the paper states a bound; the measured maximum is 0.0075"}
 - {id: s43_spread,        value: 0.40,   precision: 2, location: "§4.3 moving by", tier: 0, key: t1.spread_max}
 
 # ---------------------------------------------------------------- Table 2 caption and body
-- {id: t2_ci_level,       value: 95,     precision: 0, location: "Table 2 caption, confidence level", tier: 0, key: t2.ci_level}
-- {id: t2_draws,          value: 2000,   precision: 0, location: "Table 2 caption resamples", tier: 0, key: t2.env.n_draws}
-- {id: t2_ci_env_p_lo,    value: 0.217,  precision: 3, location: "Table 2 caption CI", tier: 0, key: t2.env.ci_err_pooled.0}
-- {id: t2_ci_env_p_hi,    value: 0.232,  precision: 3, location: "Table 2 caption CI", tier: 0, key: t2.env.ci_err_pooled.1}
-- {id: t2_ci_sp_p_lo,     value: 0.006,  precision: 3, location: "Table 2 caption CI", tier: 0, key: t2.speech.ci_err_pooled.0}
-- {id: t2_ci_sp_p_hi,     value: 0.011,  precision: 3, location: "Table 2 caption CI", tier: 0, key: t2.speech.ci_err_pooled.1}
-- {id: t2_ci_env_c_lo,    value: 0.005,  precision: 3, location: "Table 2 caption CI", tier: 0, key: t2.env.ci_err_cond.0}
-- {id: t2_ci_env_c_hi,    value: 0.009,  precision: 3, location: "Table 2 caption CI", tier: 0, key: t2.env.ci_err_cond.1}
-- {id: t2_ci_sp_c_lo,     value: 0.000,  precision: 3, location: "Table 2 caption CI", tier: 0, key: t2.speech.ci_err_cond.0}
-- {id: t2_ci_sp_c_hi,     value: 0.003,  precision: 3, location: "Table 2 caption CI", tier: 0, key: t2.speech.ci_err_cond.1}
 - {id: t2_env_pooled,     value: 0.4336, precision: 4, location: "Table 2 env pooled", tier: 0, key: t2.env.pooled}
 - {id: t2_env_cond,       value: 0.2022, precision: 4, location: "Table 2 env conditioned", tier: 0, key: t2.env.cond}
 - {id: t2_env_comp,       value: 0.2090, precision: 4, location: "Table 2 env component-only", tier: 0, key: t2.env.comp}
@@ -236,14 +261,14 @@ numbers:
 - {id: s44_published,     value: 0.4336, precision: 4, location: "§4.4 charged EER", tier: 0, key: t2.env.pooled}
 - {id: s44_gate_threshold, value: 0.5,   precision: 1, location: "§4.4 gate gamma >= 1/2", tier: 0, key: settings.gate_threshold, printed: false,
    why: "typeset as the fraction 1/2"}
-- {id: s44_precision,     value: 0.999,  precision: 3, location: "§4.4 gate precision", tier: 0, key: t2.gate.precision}
-- {id: s44_recall,        value: 0.943,  precision: 3, location: "§4.4 gate recall", tier: 0, key: t2.gate.recall}
-- {id: s44_red_env,       value: 97,     precision: 0, location: "§4.4 reduction, env", tier: 0, key: t2.env.reduction_pct}
-- {id: s44_red_speech,    value: 78,     precision: 0, location: "§4.4 reduction, speech", tier: 0, key: t2.speech.reduction_pct}
-- {id: s44_sweep_t_lo,    value: 0.1,    precision: 1, location: "§4.4 gate threshold sweep from", tier: 0, key: settings.sweep_lo}
-- {id: s44_sweep_t_hi,    value: 0.9,    precision: 1, location: "§4.4 gate threshold sweep to", tier: 0, key: settings.sweep_hi}
-- {id: s44_sweep_lo,      value: 0.0036, precision: 4, location: "§4.4 threshold sweep, error at 0.1", tier: 0, key: t2.threshold_sweep.0.1}
-- {id: s44_sweep_hi,      value: 0.0096, precision: 4, location: "§4.4 threshold sweep, error at 0.9", tier: 0, key: t2.threshold_sweep.0.9}
+- {id: s44_precision,     value: 0.999,  precision: 3, location: "§4.4 gate precision", tier: 0, key: t2.gate.precision, document: [extended]}
+- {id: s44_recall,        value: 0.943,  precision: 3, location: "§4.4 gate recall", tier: 0, key: t2.gate.recall, document: [extended]}
+- {id: s44_red_env,       value: 97,     precision: 0, location: "PROOFS.pdf, §4.4 passage: reduction, env", tier: 0, key: t2.env.reduction_pct, document: [extended]}
+- {id: s44_red_speech,    value: 78,     precision: 0, location: "§4.4 reduction, speech", tier: 0, key: t2.speech.reduction_pct, document: [extended]}
+- {id: s44_sweep_t_lo,    value: 0.1,    precision: 1, location: "§4.4 gate threshold sweep from", tier: 0, key: settings.sweep_lo, document: [extended]}
+- {id: s44_sweep_t_hi,    value: 0.9,    precision: 1, location: "§4.4 gate threshold sweep to", tier: 0, key: settings.sweep_hi, document: [extended]}
+- {id: s44_sweep_lo,      value: 0.0036, precision: 4, location: "§4.4 threshold sweep, error at 0.1", tier: 0, key: t2.threshold_sweep.0.1, document: [extended]}
+- {id: s44_sweep_hi,      value: 0.0096, precision: 4, location: "§4.4 threshold sweep, error at 0.9", tier: 0, key: t2.threshold_sweep.0.9, document: [extended]}
 
 # ---------------------------------------------------------------- Section 5
 - {id: s5_spread,         value: 0.40,   precision: 2, location: "§5 conclusion", tier: 0, key: t1.spread_max}

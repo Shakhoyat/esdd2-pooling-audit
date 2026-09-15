@@ -8,7 +8,7 @@
 \setlength{\floatsep}{8pt plus 2pt minus 2pt}
 \setlength{\intextsep}{8pt plus 2pt minus 2pt}
 
-\newcommand{\tabcapgap}{\vspace{3pt}}
+\let\footnotesize\small
 
 \makeatletter
 \gdef\@title{\fontsize{14}{16}\selectfont
@@ -37,7 +37,7 @@
 \maketitle
 
 \begin{abstract}
-Component-level audio anti-spoofing scores speech and environmental components on separate axes. An untouched recording has no separately generated component: on both axes it is a \emph{structural zero}, not a missing value. The ESDD2 evaluation plan nonetheless pools these clips with genuine \emph{bona fide} mixtures. This rule distorts the reported Equal Error Rate (EER): varying only the constant score assigned to structural zeros moves a fixed model's environmental EER between $0.5382$ and $0.1412$. We prove that weighted-area summaries such as AUC survive this pooling while EER admits no aggregation rule; published pooled EERs determine none of $55$ pairwise comparisons among eleven challenge systems. No label-free per-clip score reduction recovers the component-only value, so the correction belongs in the protocol. Evaluating each component only where it applies recovers it exactly; a reader using only the submitted scores comes within $0.0068$ rather than $0.2246$. Code: \url{https://github.com/Shakhoyat/esdd2-pooling-audit}.
+Component-level audio anti-spoofing scores speech and environmental components on separate axes. An untouched recording has no separately generated component: on both axes it is a structural zero, not a missing value. The ESDD2 evaluation plan nonetheless pools these clips with genuine bona fide mixtures. This rule distorts the reported Equal Error Rate (EER): varying only the constant score assigned to structural zeros moves a fixed model's environmental EER between $0.5382$ and $0.1412$. We prove that weighted-area summaries such as AUC survive this pooling while EER admits no aggregation rule; published pooled EERs determine none of $55$ pairwise comparisons among eleven challenge systems. No label-free per-clip score reduction recovers the component-only value, so the correction belongs in the protocol. Evaluating each component only where it applies recovers it exactly; a reader using only the submitted scores comes within $0.0068$ rather than $0.2246$.
 \end{abstract}
 
 \begin{keywords}
@@ -49,14 +49,14 @@ equal error rate, ROC analysis
 \label{sec:intro}
 
 Audio deepfake detection focuses not only on whether a recording is manipulated, but also on identifying which component has been manipulated. Partial-spoof detection localizes manipulation in time~\cite{partialspoof}, whereas component-level detection localizes it by source, evaluating a speech component and an environmental component on entirely separate axes~\cite{compspoof2026,esdd2,pcmix2026}.
-This separation matters because a forgery may fabricate only one component while the other remains genuine, and a system that names the fabricated component says more than a single binary verdict.
+This separation is important because a forgery may involve only one component, while the other components remain genuine. A system that successfully identifies which specific component was fabricated provides far more utility than one that simply outputs a single binary verdict.
 
-\textbf{Structural zeros vs.\ sampling zeros.} A pristine, untouched audio recording inherently has no separate speech or environment component. In contrast, a \emph{bona fide} mixture contains separate components that could have been generated independently. Zero-inflated and hurdle models draw exactly this line. An untouched recording is a \emph{structural} zero because the component does not apply to it. A \emph{bona fide} mixture is a \emph{sampling} zero because the component applies, but it happens to be genuine. Pooling the two is known to bias estimates~\cite{he2014}. Throughout this paper, we use \emph{structural zero} for these inapplicable pristine captures; in CompSpoofV2, they are the ``class 0'' (\texttt{original}) category.
-The ESDD2 evaluation plan states in Table~I that these structural zeros (Class 0) are mapped to the \emph{bona fide} class for both speech and environmental sounds~\cite{esdd2plan}, and the scorer released with the challenge baseline implements this exact rule. We are therefore not exposing an unstated or hidden convention. Rather, this paper shows that the stated rule, which combines structural zeros with sampling zeros on the same \emph{bona fide} side, invalidates the metric. Keeping the model fixed and changing only the constant value assigned to these clips changes the reported environmental EER from $0.5382$ to $0.1412$ (\S\ref{sec:exp}). A gap of nearly $0.40$ therefore opens under a rule every team follows identically: the plan fixes how class~0 is labeled, but not the score a system assigns to it, nor the range that score lives in.
+An original recording has no separate speech or environment component, whereas a bona fide mixture has components that could have been generated independently. Zero-inflated and hurdle models draw exactly this line: the recording is a \emph{structural zero}, because the component does not apply to it, and the mixture a \emph{sampling zero}, because the component applies but happens to be genuine; pooling the two biases estimates~\cite{he2014}. We use structural zero for these inapplicable recordings, the class 0 (\texttt{original}) category of CompSpoofV2.
+The evaluation protocol explicitly dictates how these zeros are handled. The ESDD2 evaluation plan states in Table~I that these structural zeros (Class 0) are mapped to the bona fide class for both speech and environmental sounds~\cite{esdd2plan}, and the released scorer enforces this exact rule. We are therefore not exposing an unstated or hidden convention. Rather, this paper shows that the stated rule, which combines structural zeros with sampling zeros and treats both as part of the same bona fide class, invalidates the metric. Keeping the model architecture completely fixed and changing only the constant value assigned to these clips changes the reported environmental EER from $0.5382$ to $0.1412$. A gap of nearly $0.40$ therefore opens under a rule every system follows identically: the plan fixes how class~0 is labeled, but not the score a system assigns to it, nor the range that score lives in.
 
-\vspace{2pt}\noindent \textbf{Contributions.} (i) Because the structural zeros enter the positive class while the negative set is untouched, the Receiver Operating Characteristic (ROC) curves combine point by point (Fig.~\ref{fig:pooling}); we prove that a ROC summary can be aggregated under this pooling if and only if it is a monotone transformation of a weighted area. AUC satisfies this, the Equal Error Rate (EER) does not. (ii) We give the sharp identified set for the component-only EER given the published pooled EER and the class share. Across eleven published challenge systems this leaves all $55$ pairwise comparisons undetermined on both axes. (iii) We show that any label-free per-clip score reduction settles on a different fixed point, so participants cannot recover the component-only EER. (iv) The correction must therefore occur at the protocol level: organizers, who already hold the class partition, can evaluate each axis strictly where it applies, fixing the metric via a single-line scorer update that burdens no participant.
+\vspace{2pt}\noindent \textbf{Contributions: } (i) Because the structural zeros enter the positive class while the negative set is untouched, the Receiver Operating Characteristic (ROC) curves combine point by point (Fig.~\ref{fig:pooling}); we prove that a ROC summary can be aggregated under this pooling if and only if it is a monotone transformation of a weighted area. For AUC this recovers a known mixture identity~\cite{gonen2013}; the Equal Error Rate (EER) falls outside the class, and no aggregation rule for it exists. (ii) We give the sharp identified set for the component-only EER given the published pooled EER and the class share. Across eleven published challenge systems this leaves all $55$ pairwise comparisons undetermined on both axes. (iii) We show that any label-free per-clip score reduction settles on a different fixed point, so the component-only EER cannot be recovered from a submitted score file. (iv) Because label-free reduction fails, the correction must occur at the protocol level. The class partition is already available where the scorer runs, so each axis can be evaluated strictly where it applies, fixing the metric through a single-line scorer update and leaving the submission format untouched.
 
-The empirical setting is the ESDD2 challenge~\cite{esdd2} and its CompSpoofV2 corpus~\cite{compspoof2026}. Four of the five classes are mixtures whose components each carry a provenance label. The fifth, \texttt{original}, is an untouched capture and acts as a structural zero; on the evaluation split these make up $53.2\%$ of the environmental \emph{bona fide} side ($w_0=0.5323$ in the notation of \S\ref{sec:unrec}). The challenge ranks on Macro-F1 and reports the three EERs as diagnostics~\cite{esdd2plan}; the diagnostics are nonetheless the numbers on which component detectors are compared in print.
+The empirical setting is the ESDD2 challenge~\cite{esdd2} and its CompSpoofV2 corpus~\cite{compspoof2026}. Four of the five classes are mixtures whose components each carry a provenance label. The fifth, \texttt{original}, is an untouched recording and acts as a structural zero; on the evaluation split these make up $53.2\%$ of the environmental bona fide side ($w_0=0.5323$ in the notation of \S\ref{sec:unrec}). The challenge ranks on Macro-F1 and reports the three EERs as diagnostics~\cite{esdd2plan}; the diagnostics are nonetheless the numbers on which component detectors are compared in print.
 
 \section{Metric identifiability under component pooling}
 \label{sec:unrec}
@@ -65,7 +65,7 @@ Fix a component axis with negative set $\mathcal{N}$ and positive side $\mathcal
 \mathcal{P}_0 \sqcup \mathcal{P}_{\mathrm{a}}$, where $\mathcal{P}_0$ collects the inputs the axis
 does not describe; write $w_0 = |\mathcal{P}_0|/|\mathcal{P}|$ and $w_{\mathrm{a}} = 1-w_0$. The
 published protocol scores $\mathcal{P}$ against $\mathcal{N}$, a reader removing the convention
-scores $\mathcal{P}_{\mathrm{a}}$ against \emph{the same} $\mathcal{N}$. Only the positive side
+scores $\mathcal{P}_{\mathrm{a}}$ against the same $\mathcal{N}$. Only the positive side
 changes, so with $\mathrm{FRR}_S$ the false-rejection rate on $S$,
 \begin{equation}
 \mathrm{FRR}_{\text{pub}}(\tau) \;=\; w_0\,\mathrm{FRR}_0(\tau) \;+\; w_{\mathrm{a}}\,\mathrm{FRR}_{\mathrm{a}}(\tau).
@@ -78,21 +78,23 @@ of $\mathcal{N}$ alone, so the same weights carry to the curves,
 \mathrm{ROC}_{\mathrm{pub}}(t) \;=\; w_0\,\mathrm{ROC}_0(t) \;+\; w_{\mathrm{a}}\,\mathrm{ROC}_{\mathrm{a}}(t),
 \label{eq:roc}
 \end{equation}
-and pooling a structural zero class is a convex combination in ROC space. The question is which
-summaries commute with it.
+and pooling a structural zero class is a convex combination in ROC space. Equation~\eqref{eq:roc}
+is not itself new. G\"onen~\cite{gonen2013} derives the same mixture identity for a marker whose
+diseased population is heterogeneous and whose non-diseased sample is shared, and reads the area off
+it directly. That settles one summary. The question is which others commute with the mixing.
 
 \begin{figure}[!t]
 \centering
 \includegraphics[width=\columnwidth]{fig_pooling}
-\caption{\textbf{Areas average; crossings do not.} Pooling a structural zero class adds ROC curves
-pointwise. The pooled area is exactly the weighted mean of the component areas
-($0.432 = 0.532\times0.000 + 0.468\times0.924$), while the pooled crossing is not the weighted mean
-of the component crossings ($0.538$ against $0.609$), the dividing line Theorem~1 makes exact
-(BEATs probe at seed $1337$, environmental axis, evaluation split, $c=0$).}
+\caption{\textbf{Areas average; crossings do not.} BEATs probe, environmental axis, evaluation
+split, seed 1337. Pooling a structural zero class adds ROC curves pointwise. The pooled area is exactly the weighted mean of the component areas
+($0.4322 = 0.5323\times0.0000 + 0.4677\times0.9241$), while the pooled crossing is not the weighted mean
+of the component crossings ($0.5380$ against $0.6089$). That is the dividing line Theorem~1 makes
+exact.}
 \label{fig:pooling}
 \end{figure}
 
-\vspace{2pt}\noindent\textbf{Theorem 1 (collapsibility).} \emph{Let $T$ be a ROC summary,
+\vspace{2pt}\noindent\textbf{Theorem 1 (collapsibility): } \emph{Let $T$ be a ROC summary,
 continuous, non-decreasing under pointwise dominance and strictly so under strict dominance, on a convex class $\mathcal{R}$
 whose image $T[\mathcal{R}]$ is an interval and in which every $R$ is strictly dominated by, and strictly dominates, curves attaining every value of $T[\mathcal{R}]$ above and below $T(R)$. Then $T$ admits an aggregation rule $T_{\mathrm{pub}} = \varphi(T_0,
 T_{\mathrm{a}}, w_0)$ for all curves and all $w_0$ if and only if $T = g \circ L$ with $g$
@@ -100,52 +102,67 @@ continuous and strictly monotone and $L[\mathrm{ROC}] = c + \int_0^1 \mathrm{ROC
 finite non-negative Borel measure $W$, in which case $\varphi$ is the quasi-arithmetic mean generated by $g^{-1}$.}
 
 \begin{proof}
-\emph{Sufficiency.} With $T=g\circ L$ and $w_0+w_{\mathrm{a}}=1$ the constant is absorbed, so $L$ is
-affine under mixing; writing $L=g^{-1}\!\circ T$ and applying $g$ gives the rule with
-$\varphi(x,y,w)=g\big(w\,g^{-1}(x)+(1-w)g^{-1}(y)\big)$.
+Sufficiency is immediate: $L$ is affine under mixing, so applying $g$ gives
+$\varphi(x,y,w)=g(w\,g^{-1}(x)+(1-w)g^{-1}(y))$. For necessity, fix $w$: then $\varphi$ is an
+idempotent, bisymmetric mean on $T[\mathcal{R}]$, strictly increasing by the richness hypothesis, hence
+quasi-arithmetic~\cite[\S6.4]{aczel1966}; composing mixings forces a common generator $k$ and weight
+$w$~\cite[Chs.~17--18]{aczel1989}, so $k\circ T$ is affine and the integral form follows by Riesz
+representation. The full argument is in \texttt{PROOFS.pdf} at the repository of footnote~\ref{fn:code}.
+\end{proof}
 
-\emph{Necessity.} Fix $w$ and set $x\oplus y=\varphi(x,y,w)$ on $I=T[\mathcal{R}]$. Mixing is
-idempotent, so $x\oplus x=x$; $\oplus$ is strictly increasing in each argument because mixing
-preserves pointwise dominance; and it is bisymmetric, since $(A\oplus B)\oplus(C\oplus D)$ and
-$(A\oplus C)\oplus(B\oplus D)$ are both $w^2A+w(1-w)(B+C)+(1-w)^2D$. Continuity is inherited from
-$T$, and the richness hypothesis carries all four to $I^4$. Acz\'el~\cite[\S6.4]{aczel1966} then gives a
-continuous strictly monotone $k_w$ and $\alpha(w)\in(0,1)$ with $x\oplus y=k_w^{-1}\big(\alpha(w)
-k_w(x)+(1-\alpha(w))k_w(y)\big)$. Mixing at $v$ after $w$ is mixing at weights $vw,\,v(1-w),\,1-v$,
-so $\{\oplus_w\}$ is mutually bisymmetric, which for quasi-arithmetic means forces a common generator $k$~\cite[Chs.~17--18]{aczel1989}; idempotence and the same composition then make $\alpha$ multiplicative and
-continuous, so $\alpha(w)=w$. Hence $L:=k\circ T$ is affine on $\mathcal{R}$ and continuous in the
-sup norm, so it extends to a continuous affine functional on the closed convex hull of $\mathcal{R}$
-in $C[0,1]$; by the Riesz representation theorem every such functional is $c+\int_0^1\mathrm{ROC}\,dW$
-for a finite signed Borel $W$, and monotonicity of $T$ forces $W\ge 0$. Take $g:=k^{-1}$.
-\qedhere
+\vspace{2pt}\noindent\textbf{Lemma: } \emph{If $T$ admits an aggregation rule $\varphi$ and
+$T(R_0)=T(R_0')$, then $T(wR_0+(1-w)S)=T(wR_0'+(1-w)S)$ for every $S\in\mathcal{R}$ and every $w$,
+because both sides equal $\varphi(T(R_0),T(S),w)$.}
+
+\vspace{2pt}\noindent\textbf{Proposition 2: } \emph{The equal error rate, the minimum detection
+cost and Youden's index admit no aggregation rule.}
+
+\begin{proof}
+Let $A$, $B$ and $S$ join $(0,0)$ to $(1,1)$ by straight segments through the interior breakpoints
+$(\tfrac25,\tfrac35)$; $(\tfrac3{11},\tfrac12),(\tfrac25,\tfrac35)$; and $(\tfrac27,1)$. All
+three are concave, hence equal to their own convex hulls. Curves $A$ and $B$ share an equal error
+rate of $\tfrac25$ yet differ as curves ($\mathrm{AUC}$ $\tfrac35$ against $\tfrac{34}{55}$), and
+mixing each with the \emph{same} $S$ at $w=\tfrac12$ gives $\tfrac27$ and $\tfrac3{11}$; both
+pooled crossings fall on curve vertices, so they are exact rather than interpolated. A second
+triple, through $(\tfrac13,\tfrac23)$; $(\tfrac16,\tfrac12),(\tfrac13,\tfrac23)$; and
+$(\tfrac15,\tfrac45)$, shares a minimum detection cost and an index of $\tfrac13$ at equal priors
+and unit costs, and pools to $\tfrac7{24}$ against $\tfrac4{15}$ and to $\tfrac5{12}$ against
+$\tfrac7{15}$. Each pair contradicts the Lemma, so no $\varphi$ exists; on the same curves every
+weighted area has residual exactly zero. A third triple, in the released code, separates the minimum detection cost at the ASVspoof 5 cost parameters.
 \end{proof}
 
 \vspace{2pt}
-\noindent\emph{Relation to prior work.} The integral class is not new~\cite{wieand1989}, and
-characterizations of the same shape exist for confusion counts~\cite{prati2026}, association
-measures~\cite{kenah2025}, and fairness auditing under unobserved protected
-class~\cite{kallus2019}. Those aggregate over groups carrying their own negatives. A positive
-population mixed against a common reference is known to give \eqref{eq:roc}~\cite{gonen2013}; what
-is new is the converse, which summaries admit any aggregation rule, and that splitting the positive
-side against a \emph{shared} negative set puts a fixed point outside the class. This also separates
-our setting from selective prediction~\cite{elyaniv2010}, where the model chooses to abstain, rather
-than the evaluation protocol pooling inapplicable inputs.
+\noindent\textbf{Relation to prior work: } The integral class is not new~\cite{wieand1989}, and
+characterizations of the same shape exist for confusion counts~\cite{prati2026} and association
+measures~\cite{kenah2025}. Those aggregate over groups that carry their own negatives, where even the area
+acquires cross-group terms~\cite{matos2026}; \eqref{eq:roc} splits the positive side against a shared negative
+set, so the cross terms vanish and only the fixed point is left outside the class. Nor is this selective
+prediction~\cite{elyaniv2010}, where the model abstains. Within anti-spoofing, the t-DCF was introduced because
+the EER operating point does not reflect application requirements~\cite{kinnunen2020tdcf}, and the t-EER removes
+its free parameters in a tandem setting~\cite{kinnunen2024teer}; both change the operating point or the cost
+model while holding the evaluation population fixed, whereas here the population itself carries rows to
+which the axis does not apply.
 
 \vspace{2pt}
-The theorem sorts the summaries in routine use. Area under the curve, partial area, and
-true-positive rate at a fixed false-acceptance rate are of this form, as is a detection cost at a
-\emph{fixed} threshold. The equal error rate is not, nor is a minimum detection cost (a minimum of
-functions affine in the share, hence concave in it) nor Youden's index (a maximum, hence convex).
-Measured over the seven systems of \S\ref{sec:exp} and both axes, every summary the theorem calls
-collapsible has a residual below $10^{-15}$ and every one it does not has a residual of at least
-$1.4\times10^{-4}$ against the weighted mean; taking $W$ Lebesgue recovers the area, whose largest
-residual over the fourteen checks is $2.22\times10^{-16}$~\cite{hanley1982}.
+The theorem sorts the summaries in routine use. Area under the curve~\cite{hanley1982}, partial area, and
+true-positive rate at a fixed false-acceptance rate are of this form; a detection cost evaluated at
+a \emph{fixed} operating point aggregates directly by \eqref{eq:mix}, though it is a functional of
+the threshold rather than of the curve. Proposition~2 places the equal error rate, the minimum
+detection cost and Youden's index outside the class. A minimum over thresholds is not an
+integral against the curve, and that is the form the summaries this field ranks on take: ASVspoof
+has ranked on the \emph{minimum} normalised t-DCF since 2019~\cite{kinnunen2020tdcf}, ASVspoof 5
+ranks on a minimum detection cost~\cite{asvspoof5}, and the architecture-agnostic
+a-DCF~\cite{shim2024adcf} shares it. \S\ref{sec:convention_sensitivity} measures the resulting
+distortion at the ASVspoof 5 cost parameters.
+Measured over both axes of seven systems, the five in Table~\ref{tab:spread} plus SSLAM and
+XLS-R probes, every summary the theorem calls collapsible has a
+residual below $10^{-15}$ and every one it does not exceeds $10^{-4}$ against the weighted mean; taking $W$ Lebesgue recovers the area.
 The residual is an exact algebraic difference, not a statistical test. An equal error rate is a
 fixed point of $\mathrm{FAR}=\mathrm{FRR}$ rather than an
 integral against the curve, and the fixed point of a convex combination is not the combination of
-the fixed points. Two curves sharing a crossing but differing to its left mix with a third curve to
-different crossings, so no $\varphi$ exists for EER.
+the fixed points.
 
-\vspace{2pt}\noindent\textbf{Theorem 2 (sharp partial identification).} \emph{A published table
+\vspace{2pt}\noindent\textbf{Theorem 3 (sharp partial identification): } \emph{A published table
 fixing $w_0$ and $\mathrm{EER}_{\text{pub}}$ confines the component-only value to}
 \begin{equation}
 \Big[\max\Big(0,\tfrac{\mathrm{EER}_{\text{pub}} - w_0}{w_{\mathrm{a}}}\Big),\;
@@ -154,31 +171,21 @@ fixing $w_0$ and $\mathrm{EER}_{\text{pub}}$ confines the component-only value t
 \end{equation}
 \emph{and both endpoints are attained, so the interval is the sharp identified set given $(w_0,\mathrm{EER}_{\text{pub}})$.}
 
-\noindent Write $\tau^\ast$ for the threshold at which the published rates cross, so
-$\mathrm{FAR}(\tau^\ast) = \mathrm{FRR}_{\text{pub}}(\tau^\ast) = \mathrm{EER}_{\text{pub}}$. Evaluating
-\eqref{eq:mix} there, with $\mathrm{FRR}_0(\tau^\ast) \in [0,1]$ the only freedom, gives
-$\mathrm{FRR}_{\mathrm{a}}(\tau^\ast) \in [(\mathrm{EER}_{\text{pub}} - w_0)/w_{\mathrm{a}},\,
-\mathrm{EER}_{\text{pub}}/w_{\mathrm{a}}]$. Because $\mathcal{N}$ is shared the false-acceptance
-rate is common to both components, so $\mathrm{FAR}_{\mathrm{a}}(\tau^\ast) =
-\mathrm{EER}_{\text{pub}}$; since $\mathrm{FAR}$ falls and $\mathrm{FRR}_{\mathrm{a}}$ rises in $\tau$, the component-only crossing $\mathrm{EER}_{\mathrm{a}}$ lies between
-$\mathrm{FAR}_{\mathrm{a}}(\tau^\ast)$ and $\mathrm{FRR}_{\mathrm{a}}(\tau^\ast)$. As
-$(\mathrm{EER}_{\text{pub}} - w_0)/w_{\mathrm{a}} \le \mathrm{EER}_{\text{pub}} \le
-\mathrm{EER}_{\text{pub}}/w_{\mathrm{a}}$ whenever $\mathrm{EER}_{\text{pub}} \le 1$, that bracket
-is contained in \eqref{eq:interval}; intersecting with $[0,1]$ gives the stated form. Both
-directions are checked numerically in the released code.
+\noindent At the published crossing $\tau^\ast$, where $\mathrm{FAR}(\tau^\ast)=\mathrm{FRR}_{\text{pub}}(\tau^\ast)=\mathrm{EER}_{\text{pub}}$,
+\eqref{eq:mix} with $\mathrm{FRR}_0(\tau^\ast)\in[0,1]$ confines $\mathrm{FRR}_{\mathrm{a}}(\tau^\ast)$ to
+$[(\mathrm{EER}_{\text{pub}}-w_0)/w_{\mathrm{a}},\,\mathrm{EER}_{\text{pub}}/w_{\mathrm{a}}]$, and the shared negatives give
+$\mathrm{FAR}_{\mathrm{a}}(\tau^\ast)=\mathrm{EER}_{\text{pub}}$; as $\mathrm{FAR}$ falls and $\mathrm{FRR}_{\mathrm{a}}$ rises in
+$\tau$, $\mathrm{EER}_{\mathrm{a}}$ lies between the two, inside \eqref{eq:interval}. The released code checks both
+directions and, for every sampled value, endpoints included, builds an admissible system matching both
+crossings to $10^{-12}$; the full proof is in \texttt{PROOFS.pdf}. Conditioning also on a submission's other
+published cells, we exhibit a witness for the lower endpoint only, so there \eqref{eq:interval} is an outer
+bound. Bounding a component functional under a mixture is classical~\cite{horowitz1995}; \eqref{eq:interval}
+bounds from one published scalar. For the reference baseline's environmental row on the evaluation split
+($w_0=0.5323$, $\mathrm{EER}_{\text{pub}}=0.4336$) it returns $[0,\,0.9271]$, $93\%$ of the range, containing
+the true $0.2090$ along with almost everything else.
 
-For every sampled value in \eqref{eq:interval}, endpoints included, the released code builds an
-admissible system matching both crossings to $10^{-12}$. Conditioning additionally on the other published cells of a
-particular submission constrains the construction further; there we exhibit a witness for the lower
-endpoint only, so under that stronger conditioning \eqref{eq:interval} is an outer bound. Bounding a component functional
-under a two-component mixture is classical~\cite{horowitz1995}; \eqref{eq:interval} bounds from a
-single published scalar. The reference baseline's environmental row on the \emph{evaluation} split
-has $w_0=0.5323$ and $\mathrm{EER}_{\text{pub}}=0.4336$, so \eqref{eq:interval} returns
-$[0,\,0.9271]$, that is $93\%$ of the range, containing the true $0.2090$ along with almost
-everything else.
-
-On the \emph{test} split, across the eleven systems publishing component EERs in the challenge
-overview, \eqref{eq:interval} determines \emph{none} of the $\binom{11}{2}=55$ pairwise comparisons
+On the test split, across the eleven systems publishing component EERs in the challenge
+overview, \eqref{eq:interval} determines none of the $\binom{11}{2}=55$ pairwise comparisons
 on either axis. Every interval has lower endpoint $0$, so all eleven share a common sub-interval and
 every strict ordering of the eleven remains feasible. After publication, the component-only EER is
 unrecoverable.
@@ -186,48 +193,50 @@ unrecoverable.
 \section{Limits of per-clip score reduction}
 \label{sec:method}
 
-Section~\ref{sec:unrec} shows that a reader cannot recover the component-only EER from a published pooled table. Disclosure does not help: even if teams reported their fill value $c$, the pooling could not be undone. The submission format admits one scalar per axis, so per-clip scores must be reduced before scoring, and no reduction rule that does not use the withheld partition targets the component-only value. The organizer, who holds the partition, recovers it exactly (\S\ref{sec:necessity}); the participant cannot.
+Section~\ref{sec:unrec} shows that a reader cannot recover the component-only EER from a published pooled table. A natural response is that the issue is one of disclosure: if the constant fill value $c$ were reported, the pooling could be undone. This section shows otherwise. The submission format admits one scalar per axis, so per-clip scores must be reduced before scoring, and no reduction rule that avoids the withheld partition targets the component-only value. Where the partition is available at scoring time the value is recovered exactly (\S\ref{sec:necessity}); from a submitted score file alone it is not.
 
 \subsection{Applicability signal in the submission format}
+\label{sec:applicability}
 
-The official submission format requires a predicted class and three scores, including a
-score for the pristine \texttt{original} class~\cite{esdd2plan}. While this is not an explicit
-``applicability'' flag, it is a strong signal: on the reference system, this
-score separates the structural zeros with an AUC of $0.9964$. Let $\gamma_a$
-denote the probability that axis $a$ applies, and let $d_a$ denote the model's
-authenticity score for that component. With one score per axis, the two must be combined as
-$\tilde{s}_a = \gamma_a d_a + (1-\gamma_a)c$ for a constant fill value $c$.
+Let $\gamma_a$
+denote the probability that axis $a$ applies (read off a submission as $1-\sigma$ of its \texttt{original} score), and let $d_a$ denote the model's
+authenticity score for that component. Since the format requires exactly one score per axis, these values
+must be combined as
+$\tilde{s}_a = \gamma_a d_a + (1-\gamma_a)c$,
+where $c$ is a constant fill value.
 
-No canonical choice of $c$ reproduces either value of interest. On the reference system's environmental axis, with its scores on their native scale, the published pooled EER is $0.4336$ and the component-only EER is $0.2090$; $c=0$ yields $0.4654$, $c=0.5$ yields $0.1307$, and an oracle gate on the ground-truth partition also yields $0.1307$, since a perfect gate only sharpens the atom at $c$. Only $c=\tau_{\mathrm{a}}^\ast$, fixed by the withheld labels, could land on $0.2090$ (Proposition~3), and the released scorer misses even that: as $c$ rises past $0.0119$ its value steps from $0.4631$ to $0.1970$, the closest any constant comes.
+No canonical choice of $c$ reproduces either value of interest. On the reference system's environmental axis the published pooled EER is $0.4336$ and the component-only EER is $0.2090$; on that system's native score scale $c=0$ yields $0.4654$ and $c=0.5$ yields $0.1307$. An oracle gate handed the ground-truth partition reproduces the corresponding constant-fill column exactly, since a perfect gate sets $\gamma_a=0$ on every structural zero and therefore only sharpens the atom already sitting at $c$. Only $c=\tau_{\mathrm{a}}^\ast$, fixed by the withheld labels, could land on $0.2090$ (Proposition~4), and the released scorer misses even that: as $c$ rises past $0.0119$ its value steps from $0.4631$ to $0.1970$, the closest any constant comes.
 
-\subsection{Why no reduction can work}
+\subsection{Impossibility of label-free score reduction}
 
-\vspace{1pt}\noindent\textbf{Proposition 3.} \emph{Under any gate and constant fill $c$, the pooled EER lies between the fixed points of $\mathrm{FAR}=w_{\mathrm{a}}\mathrm{FRR}_{\mathrm{a}}$ and $\mathrm{FAR}=w_0+w_{\mathrm{a}}\mathrm{FRR}_{\mathrm{a}}$, and equals the component-only EER only when the atom sits at the component crossing of the evaluation split, a threshold fixed by the withheld labels.}
+\vspace{1pt}\noindent\textbf{Proposition 4: } \emph{Under any gate and constant fill $c$, the pooled EER lies between the fixed points of $\mathrm{FAR}=w_{\mathrm{a}}\mathrm{FRR}_{\mathrm{a}}$ and $\mathrm{FAR}=w_0+w_{\mathrm{a}}\mathrm{FRR}_{\mathrm{a}}$, and equals the component-only EER only when the atom sits at the component crossing of the evaluation split, a threshold fixed by the withheld labels.}
 
 \noindent A reduction can move the atom but cannot remove rows from $\mathcal{P}$, which the protocol fixes. From \eqref{eq:mix}, placing the atom above every threshold gives $\mathrm{FRR}_0=0$ and the crossing $\mathrm{FAR}=w_{\mathrm{a}}\mathrm{FRR}_{\mathrm{a}}$; placing it below gives $\mathrm{FRR}_0=1$ and $\mathrm{FAR}=w_0+w_{\mathrm{a}}\mathrm{FRR}_{\mathrm{a}}$. Between these thresholds the pooled crossing falls inside a jump of height $w_0$ and equals $\mathrm{FAR}(c)$, so it coincides with the component-only crossing only at $c=\tau_{\mathrm{a}}^\ast$, a function of the withheld labels. Since $w_{\mathrm{a}}<1$, the label-free choice $\mathrm{FRR}_0=0$ sits strictly below the component-only fixed point.
 
 \vspace{2pt}
-The divergence is visible in practice. On the reference system's environmental axis ($w_{\mathrm{a}}=0.4677$), ranking every structural-zero row above every threshold yields an EER of $0.1307$, as does the fixed point of $\mathrm{FAR}=w_{\mathrm{a}}\mathrm{FRR}_{\mathrm{a}}$, while the true component-only value is $0.2090$. A label-free reduction therefore settles on a different target rather than approaching the component-only value. Zhou and Wang~\cite{zhou2026eer} show a related invariance under monotone score transformations with the support fixed; Proposition~3 is the complement: adding structural zeros moves the fixed point by an amount only the withheld labels determine. Reporting AUC instead would sidestep the distortion, but EER remains the primary operating-point metric in anti-spoofing~\cite{asvspoof2021,asvspoof5}.
+The divergence is visible in practice. On the reference system's environmental axis, $w_{\mathrm{a}}=0.4677$. Ranking every structural-zero row above every threshold yields an EER of $0.1307$. The fixed point of $\mathrm{FAR}=w_{\mathrm{a}}\mathrm{FRR}_{\mathrm{a}}$ is also $0.1307$. Meanwhile, the true component-only value is $0.2090$.
+
+A label-free reduction therefore settles on a different target rather than approaching the component-only value. Where Zhou and Wang~\cite{zhou2026eer} demonstrate a related invariance under monotone score transformations when the support is fixed, Proposition~4 is the complementary statement: adding structural zeros moves the fixed point by an amount only the withheld labels determine. Reporting AUC in place of EER would sidestep the distortion entirely, but EER remains the primary operating-point metric in anti-spoofing evaluations~\cite{asvspoof2021,asvspoof5}.
 
 \subsection{Necessity of protocol-level correction}
 \label{sec:necessity}
 
-Proposition~3 bounds what a participant can do, and requiring an explicit applicability flag would add a field the organizers do not need. The corpus already defines the structural zero partition, and the official baseline computes the same indicator to mask class~$0$ in its loss. Since the organizers run the scorer, each axis can be evaluated on the annotated subset alone, a single-line change that leaves the submission format untouched. Where the partition is unavailable at scoring time, as in cross-corpus evaluation or deployment, the component-only EER is unidentifiable and a summary that aggregates under pooling (Theorem~1) should be reported instead.
+Proposition~4 bounds what can be done at the score level: the pooled distortion cannot be undone by post-hoc score manipulation, and requiring an explicit applicability flag would add a field the scoring procedure does not need. The corpus already defines the structural zero partition, and the official baseline computes the same indicator to mask class~$0$ in its loss. Since that partition is available where the scorer runs, each axis can be evaluated on the annotated subset alone, a single-line change that leaves the submission format untouched. Where the partition is unavailable at scoring time, as in cross-corpus evaluation or deployment, the component-only EER is unidentifiable and a summary that aggregates under pooling (Theorem~1) should be reported instead.
 
 \section{Experiments}
 \label{sec:exp}
 \subsection{Setup}
 
-CompSpoofV2~\cite{compspoof2026,esdd2} provides $175{,}361$ training and $24{,}864$ validation clips; we analyse the $27{,}605$-clip evaluation split, whose labels were released after the challenge and whose spoofed components include generators unseen in training. All mixture classes are $16$\,kHz mono; the structural-zero class is heterogeneous in sample rate and channel count, which \S\ref{sec:confounders_metric_recovery} treats as a confounder. Our systems are frozen encoders with linear or attentive probes, layers chosen on a generator holdout, each trained at three seeds: BEATs and EAT linear probes, a BEATs attentive head, and a two-encoder probe reading BEATs for the environmental axis and XLS-R for speech. SSLAM and XLS-R linear probes enter only the check of \S\ref{sec:unrec}. The reference system is the released baseline, the only system publishing per-clip scores, so \S\ref{sec:acoustic_vs_pooling} and \S\ref{sec:confounders_metric_recovery} are single-system results.
+CompSpoofV2~\cite{compspoof2026,esdd2} provides $175{,}361$ training and $24{,}864$ validation clips; we analyse the $27{,}605$-clip evaluation split, whose labels were released after the challenge and whose spoofed components include generators unseen in training. All mixture classes are $16$\,kHz mono; the structural-zero class is heterogeneous in sample rate and channel count, which \S\ref{sec:confounders_metric_recovery} treats as a confounder. Our systems are frozen encoders with linear or attentive probes, layers chosen on a generator holdout, each trained at three seeds: BEATs~\cite{chen2023beats} and EAT~\cite{chen2024eat} linear probes, a BEATs attentive head, and a two-encoder probe reading BEATs for the environmental axis and XLS-R for speech. The reference system is the released baseline, the only external system publishing per-clip scores, so \S\ref{sec:acoustic_vs_pooling} and \S\ref{sec:confounders_metric_recovery} are single-system results.\footnote{\label{fn:code}Code and the scripts that regenerate every number in this paper: \url{https://github.com/Shakhoyat/esdd2-pooling-audit}.}
 
-\subsection{Convention sensitivity}
+\subsection{Sensitivity to the fill constant}
 \label{sec:convention_sensitivity}
 
 \begin{table}[t]
 \centering
 \caption{\textbf{Environmental EER across values of the constant $c$ assigned to structural zeros} (evaluation split). Each row is one fixed system; only $c$ changes, on the system's own score scale. \emph{Prior}: $c$ is the \emph{bona fide} share of applicable clips ($0.3251$). Means over three seeds; seed s.d.\ at most $0.0015$ except for the attentive head, whose seeds straddle a step (\S\ref{sec:convention_sensitivity}). The reference is one released checkpoint; its $c=0$ cell also sits near a step, falling to about $0.20$ in $6\%$ of $1{,}000$ class-stratified resamples. Spreads are computed before rounding. Component-only excludes structural zeros and is invariant to $c$.}
 \label{tab:spread}
-\tabcapgap
+\vspace{3pt}
 \setlength{\tabcolsep}{0pt}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lccccc@{}}
 \toprule
@@ -244,39 +253,41 @@ reference      & $0.4654$ & $0.1307$ & $0.1307$ & $0.3346$ & $0.2090$ \\
 \end{tabular*}
 \end{table}
 
-Holding a system fixed and changing only the constant $c$ swings its reported environmental EER by up to $0.3970$ (Table~\ref{tab:spread}); under the component-only protocol the spread is identically zero.
+Table~\ref{tab:spread} shows that holding a system fixed and changing only the constant $c$ assigned to structural zeros swings the reported environmental EER by up to $0.3970$. Under the true component-only protocol, this spread is identically zero.
 
-The instability comes from the point mass: all structural zeros receive one constant score, and the reported EER depends on which side of the operating threshold that mass falls. The evaluation plan requests confidence scores without specifying a range, and its own worked example lists values such as $1.22$, $-1.54$ and $-1.89$~\cite{esdd2plan}, so unbounded logits are within the rules. For a probability-valued system, $c=0$ sits at the bottom of the range and the mass is rejected in full ($\mathrm{FRR}_0=1$): BEATs and EAT report $0.5382$ and $0.5400$. For a logit-valued system $c=0$ is an interior point, the attentive head and two-encoder spanning $[-25.0, 24.9]$ and $[-26.0, 34.4]$ on this axis, and the position of the mass relative to the threshold is incidental. It even varies with the seed: at $c=0.5$ the attentive head's seeds report between $0.1550$ and $0.4706$, while its component-only value stays between $0.1545$ and $0.1611$.
+This instability stems directly from the location of the point mass. Because all structural zeros receive an identical constant score, they collapse into a single point mass in the score distribution. The reported EER fluctuates depending on which side of the operating threshold this mass falls. The evaluation plan requests confidence scores without specifying a range, and its own worked example lists values such as $1.22$, $-1.54$ and $-1.89$~\cite{esdd2plan}, so unbounded logits are within the rules. For a probability-valued system, $c=0$ sits at the bottom of the range and the mass is rejected in full ($\mathrm{FRR}_0=1$): BEATs and EAT report $0.5382$ and $0.5400$. For a logit-valued system $c=0$ is an interior point, the attentive head and two-encoder spanning $[-25.0, 24.9]$ and $[-26.0, 34.4]$ on this axis, and the position of the mass relative to the threshold is incidental. It even varies with the seed: at $c=0.5$ the attentive head's seeds report between $0.1550$ and $0.4706$, while its component-only value stays between $0.1545$ and $0.1611$.
 
-The two-encoder's near-invariance (a spread of $0.0031$) is the same artifact seen from the other side: its constants all lie within $0.026$ of the boundary beyond which the mass is accepted, so every cell sits within $0.0032$ of the Proposition~3 floor. That is a property of an uncalibrated score range, not evidence of a robust protocol.
+The two-encoder's near-invariance (a spread of $0.0031$) is the same artifact seen from the other side: its constants all sit within $0.026$ of the accept boundary, keeping every Table~\ref{tab:spread} cell within $0.0032$ of the floor. That is a property of an uncalibrated score range, not evidence of a robust protocol.
 
-\subsection{Acoustic difficulty versus pooling artifacts}
+The distortion is not specific to the equal error rate. At the ASVspoof 5 cost
+parameters~\cite{asvspoof5}, applied to the component decision rather than the whole-utterance
+decision they were set for, scoring the reference submission as submitted gives a pooled minimum
+detection cost of $0.9994$ against a component-only $0.5865$, and its residual against the weighted mean reaches $0.19$, where every
+area residual stays below $10^{-15}$.
+
+\subsection{Separating acoustic difficulty from pooling artifacts}
 \label{sec:acoustic_vs_pooling}
 
-A natural objection is that environmental spoofing is simply harder to detect, so the higher pooled error reflects the model, not the protocol. A controlled ablation on the reference system separates the two. Evaluated only on mixture classes, where genuine component annotations exist, the environmental and speech heads reach comparable EERs of $0.2090$ and $0.1906$, an intrinsic difference of only $0.0184$. Reintroducing structural zeros under the benchmark mapping raises the environmental EER by $0.2246$ but the speech EER by only $0.0087$, so the reported $0.2343$ gap decomposes exactly:
-\begin{equation}
-\label{eq:gap_decomposition}
-\Delta_{\mathrm{total}} = \Delta_{\mathrm{pooling}} + \Delta_{\mathrm{intrinsic}} = 0.2159 + 0.0184 = 0.2343,
-\end{equation}
-where pooling alone ($0.2246 - 0.0087 = 0.2159$) accounts for over $92\%$ of the disparity.
+A natural objection is that environmental spoofing is simply harder to detect than speech manipulation, so the higher pooled error reflects the model rather than the protocol. A controlled ablation separates the two. Evaluated only on mixture classes, where genuine component annotations exist, the environmental and speech heads reach comparable EERs of $0.2090$ and $0.1906$, an intrinsic difference of only $0.0184$. Reintroducing structural zeros under the benchmark mapping raises the environmental EER by $0.2246$ but the speech EER by only $0.0087$, so the reported $0.2343$ gap decomposes exactly into $0.2159$ from pooling alone ($0.2246 - 0.0087$), over $92\%$ of it, and the intrinsic $0.0184$.
 
 The severity of the distortion is governed by the weighted false-rejection gap $w_0(\mathrm{FRR}_0-\mathrm{FRR}_a)$, evaluated at each axis's pooled operating point. On the speech axis ($w_0=0.3991$) this gap is $0.0169$ and the metric is nearly stable; on the environmental axis ($w_0=0.5323$) it widens to $0.3381$, driving the inflation. Because reference training explicitly masks class~$0$ across both loss functions, neither head received supervision on these instances: their output there is unspecified behaviour, not a measured deficiency. Masking is not idiosyncratic, either. The official baseline routes \texttt{original} clips away from both component detectors by construction~\cite{compspoof2026}, and at least one top-five submission masks both component losses on them, because component labels are defined only for mixtures~\cite{sit2026}.
 
-One might instead train the environment head to emit \emph{bona fide} on class~0, matching the mandated mapping. We ran this: supervising both component heads on class~0, all else fixed, lowers the pooled environmental EER by $0.20$ across three seeds and two frozen-BEATs feature configurations, with no gain in component-only detection. The heads learn to recognize pristine captures (the environmental score's AUC for class~0 rises from $0.10$ to $0.71$), not synthesized environments, and the pooled value settles within $0.008$ of the Proposition~3 floor. It is still not a function of component performance: Table~\ref{tab:spread} shows the pooled number moving by $0.40$ under the fill value alone while the component-only value stays fixed.
+One might instead train the environment head to emit bona fide on class~0, matching the mandated mapping. We ran this: supervising both component heads on class~0, all else fixed, lowers the pooled environmental EER by $0.20$ across three seeds and two frozen-BEATs feature configurations, with no gain in component-only detection. The heads learn to recognize original recordings (the environmental score's AUC for class~0 rises from $0.10$ to $0.71$), not synthesized environments, and the pooled value settles within $0.008$ of the Proposition~4 floor. It is still not a function of component performance: Table~\ref{tab:spread} shows the pooled number moving by $0.40$ under the fill value alone while the component-only value stays fixed.
 
-\subsection{Format confounders and conditioned evaluation}
+\subsection{Format confounders and applicability-conditioned evaluation}
 \label{sec:confounders_metric_recovery}
 
 \begin{table}[t]
 \centering
-\caption{\textbf{Recoverability asymmetry.} Reference system, evaluation split, no retraining. Applicability-conditioned uses only the submitted scores (what a reader can reconstruct); component-only is the organizer's exact value from the withheld partition; abs.\ error is the deviation from it, computed before rounding. $95\%$ clustered bootstrap intervals ($2{,}000$ resamples, cluster = source component clip) on the errors: pooled $[0.217, 0.232]$ and $[0.006, 0.011]$, conditioned $[0.005, 0.009]$ and $[0.000, 0.003]$.}
+\caption{\textbf{Recoverability asymmetry.} Reference system, evaluation split, no retraining.
+Absolute error is the deviation from the component-only value, computed before rounding.}
 \label{tab:endtoend}
-\tabcapgap
+\vspace{3pt}
 \setlength{\tabcolsep}{0pt}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lccccc@{}}
 \toprule
- & & applic. & component & \multicolumn{2}{c}{abs.\ error} \\
-\cmidrule(l){5-6}
+& & applic.\ & component & \multicolumn{2}{c}{abs.\ error} \\
+\cmidrule(lr){5-6}
 axis & pooled & cond. & only & pooled & cond. \\
 \midrule
 environment & $0.4336$ & $0.2022$ & $0.2090$ & $0.2246$ & $\mathbf{0.0068}$ \\
@@ -285,22 +296,14 @@ speech      & $0.1993$ & $0.1886$ & $0.1906$ & $0.0087$ & $\mathbf{0.0019}$ \\
 \end{tabular*}
 \end{table}
 
-Applicability looks easy to detect, but much of that ease is a format artifact. A trivial baseline using file-format heuristics alone reaches an $\mathrm{F}_1$ of $0.9635$, because $93\%$ of structural zeros deviate from $16$\,kHz mono. Restricting to the $525$ structural zeros that are $16$\,kHz mono, scored against the $20{,}150$ mixtures of the split, that detector falls to chance ($\mathrm{AUC}=0.5000$) while the reference system's own \texttt{original} score holds $\mathrm{AUC}=0.9957$. Every mixture is $16$\,kHz mono, so this cohort removes the encoding cue and $0.9957$ reflects the applicability signal itself. The reference system separates this class at an AUC of $0.9964$ overall, yet the protocol still charges it an environmental EER of $0.4336$.
+Applicability looks easy to detect, but much of that ease is a format artifact. A trivial baseline using file formatting heuristics alone reaches an $\mathrm{F}_1$ of $0.9635$, because $93\%$ of structural zeros deviate from $16$\,kHz mono. Restricting to the $525$ structural zeros that are $16$\,kHz mono, scored against the $20{,}150$ mixtures of the split, that detector falls to chance ($\mathrm{AUC}=0.5000$), while the reference system's own submitted \texttt{original} score still separates the two at $\mathrm{AUC}=0.9957$. Because genuine mixed utterances are uniformly $16$\,kHz mono, this format-matched cohort removes the encoding cue, so $0.9957$ reflects the applicability signal itself rather than the file format. On the full split the same score reaches $0.9964$, yet the protocol still charges the system an environmental EER of $0.4336$.
 
-Table~\ref{tab:endtoend} outlines what an external reader can recover from outside the scoring
-process. We set $\gamma_a = 1-\sigma(s_{\mathrm{o}})$, with $s_{\mathrm{o}}$ the submitted
-\texttt{original} score and $\sigma$ the logistic function, and score each axis over
-$\{x:\gamma_a(x)\ge\tfrac12\}$, at a precision of $0.999$ and a recall of $0.943$. The absolute
-deviation from the component-only value falls by $97\%$ on the environmental axis and by $78\%$ on
-the speech axis, and sweeping the gate threshold from $0.1$ to $0.9$ moves the environmental error
-only between $0.0036$ and $0.0096$. The gate fits no parameters, but it runs on the full evaluation
-split, where the format cue helps it, so this row may overstate what a reader recovers; the
-organizer's route uses no gate and is unaffected. The point is not that systems should report this signal, but that an outside reader can \emph{approximately} audit what the protocol obscures, while the organizer, holding the partition, recovers it exactly at no cost. The fix belongs inside the scorer.
+The signal needed to fix the evaluation is therefore present in the submitted scores (Table~\ref{tab:endtoend}, gate $\gamma_a\ge\tfrac12$) and ignored by the protocol.
 
 \section{Conclusion}
 \label{sec:conc}
 
-Component-level anti-spoofing routinely meets pristine inputs on which an axis does not apply. Pooling these structural zeros with genuine samples against a shared negative set leaves area-based summaries valid and distorts threshold-based ones: the environmental EER of a fixed model moves by nearly $0.40$ under the mandated rule, and published comparisons become unidentifiable. No label-free score reduction restores the component-only value, so the correction belongs in the protocol. Organizers already hold the applicability partition and should evaluate each axis where it applies, a single-line scorer change that leaves the submission format untouched.
+Component-level anti-spoofing routinely meets original recordings on which an axis does not apply. Pooling these structural zeros with genuine samples against a shared negative set leaves area-based summaries valid and distorts threshold-based ones: the environmental EER of a fixed model moves by nearly $0.40$ under the mandated rule, and published comparisons become unidentifiable. No label-free score reduction restores the component-only value, so the correction belongs in the protocol. The applicability partition is already available at scoring time, and each axis should be evaluated where it applies, a single-line scorer change that leaves the submission format untouched.
 
 \begin{thebibliography}{10}
 
@@ -334,6 +337,11 @@ Xueping Zhang, Han Yin, Yang Xiao, Lin Zhang, Ting Dang, Rohan~Kumar Das, and Mi
 \newblock ``{ESDD2}: Environment-aware speech and sound deepfake detection challenge evaluation plan,''
 \newblock {\em arXiv preprint arXiv:2601.07303v5}, 2026.
 
+\bibitem{gonen2013}
+Mithat G\"{o}nen,
+\newblock ``Mixtures of receiver operating characteristic curves,''
+\newblock {\em Academic Radiology}, vol. 20, no. 7, pp. 831--837, 2013.
+
 \bibitem{aczel1966}
 J\'{a}nos Acz\'{e}l,
 \newblock {\em Lectures on Functional Equations and Their Applications},
@@ -359,25 +367,40 @@ Eben Kenah,
 \newblock ``Rothman diagrams: the geometry of association measure modification and collapsibility,''
 \newblock {\em arXiv preprint arXiv:2506.23927v1}, 2025.
 
-\bibitem{kallus2019}
-Nathan Kallus, Xiaojie Mao, and Angela Zhou,
-\newblock ``Assessing algorithmic fairness with unobserved protected class using data combination,''
-\newblock {\em Management Science}, vol. 68, no. 3, pp. 1959--1981, 2022.
-
-\bibitem{gonen2013}
-Mithat G\"{o}nen,
-\newblock ``Mixtures of receiver operating characteristic curves,''
-\newblock {\em Academic Radiology}, vol. 20, no. 7, pp. 831--837, 2013.
+\bibitem{matos2026}
+Jo\~{a}o Matos, Ben Van~Calster, Richard~D. Riley, Paula Dhiman, and Gary~S. Collins,
+\newblock ``Collapsibility of performance metrics in clinical predictive {AI},''
+\newblock {\em arXiv preprint arXiv:2608.30568v1}, 2026.
 
 \bibitem{elyaniv2010}
 Ran El-Yaniv and Yair Wiener,
 \newblock ``On the foundations of noise-free selective classification,''
 \newblock {\em Journal of Machine Learning Research}, vol. 11, pp. 1605--1641, 2010.
 
+\bibitem{kinnunen2020tdcf}
+Tomi Kinnunen, H\'{e}ctor Delgado, Nicholas Evans, Kong~Aik Lee, Ville Vestman, Andreas Nautsch, Massimiliano Todisco, Xin Wang, Md~Sahidullah, Junichi Yamagishi, and Douglas~A. Reynolds,
+\newblock ``Tandem assessment of spoofing countermeasures and automatic speaker verification: Fundamentals,''
+\newblock {\em IEEE/ACM Trans. Audio, Speech, Language Processing}, vol. 28, pp. 2195--2210, 2020.
+
+\bibitem{kinnunen2024teer}
+Tomi~H. Kinnunen, Kong~Aik Lee, Hemlata Tak, Nicholas Evans, and Andreas Nautsch,
+\newblock ``{t-EER}: Parameter-free tandem evaluation of countermeasures and biometric comparators,''
+\newblock {\em IEEE Trans. Pattern Analysis and Machine Intelligence}, vol. 46, no. 5, pp. 2622--2637, 2024.
+
 \bibitem{hanley1982}
 James~A. Hanley and Barbara~J. McNeil,
 \newblock ``The meaning and use of the area under a receiver operating characteristic ({ROC}) curve,''
 \newblock {\em Radiology}, vol. 143, no. 1, pp. 29--36, 1982.
+
+\bibitem{asvspoof5}
+Xin Wang, H\'{e}ctor Delgado, Hemlata Tak, Jee-weon Jung, Hye-jin Shim, Massimiliano Todisco, Ivan Kukanov, Xuechen Liu, Md~Sahidullah, Tomi Kinnunen, Nicholas Evans, Kong~Aik Lee, and Junichi Yamagishi,
+\newblock ``{ASVspoof} 5: Crowdsourced speech data, deepfakes, and adversarial attacks at scale,''
+\newblock in {\em Proc. ASVspoof Workshop}, 2024, pp. 1--8.
+
+\bibitem{shim2024adcf}
+Hye-jin Shim, Jee-weon Jung, Tomi Kinnunen, Nicholas Evans, Jean-Fran\c{c}ois Bonastre, and Itshak Lapidot,
+\newblock ``{a-DCF}: An architecture agnostic metric with application to spoofing-robust speaker verification,''
+\newblock in {\em Proc. Speaker and Language Recognition Workshop (Odyssey)}, 2024, pp. 158--164.
 
 \bibitem{horowitz1995}
 Joel~L. Horowitz and Charles~F. Manski,
@@ -394,10 +417,15 @@ Xuechen Liu, Xin Wang, Md~Sahidullah, Jose Patino, H\'{e}ctor Delgado, Tomi Kinn
 \newblock ``{ASVspoof} 2021: Towards spoofed and deepfake speech detection in the wild,''
 \newblock {\em IEEE/ACM Trans. Audio, Speech, Language Processing}, vol. 31, pp. 2507--2522, 2023.
 
-\bibitem{asvspoof5}
-Xin Wang, H\'{e}ctor Delgado, Hemlata Tak, Jee-weon Jung, Hye-jin Shim, Massimiliano Todisco, Ivan Kukanov, Xuechen Liu, Md~Sahidullah, Tomi Kinnunen, Nicholas Evans, Kong~Aik Lee, and Junichi Yamagishi,
-\newblock ``{ASVspoof} 5: Crowdsourced speech data, deepfakes, and adversarial attacks at scale,''
-\newblock in {\em Proc. ASVspoof Workshop}, 2024, pp. 1--8.
+\bibitem{chen2023beats}
+Sanyuan Chen, Yu Wu, Chengyi Wang, Shujie Liu, Daniel Tompkins, Zhuo Chen, Wanxiang Che, Xiangzhan Yu, and Furu Wei,
+\newblock ``{BEATs}: Audio pre-training with acoustic tokenizers,''
+\newblock in {\em Proc. Int. Conf. Machine Learning (ICML)}, PMLR vol. 202, 2023, pp. 5178--5193.
+
+\bibitem{chen2024eat}
+Wenxi Chen, Yuzhe Liang, Ziyang Ma, Zhisheng Zheng, and Xie Chen,
+\newblock ``{EAT}: Self-supervised pre-training with efficient audio transformer,''
+\newblock in {\em Proc. Int. Joint Conf. Artificial Intelligence (IJCAI)}, 2024, pp. 3807--3815.
 
 \bibitem{sit2026}
 Andr\'{e} Runewicz, Karla Sch\"{a}fer, and Martin Steinebach,

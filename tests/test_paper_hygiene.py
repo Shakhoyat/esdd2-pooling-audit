@@ -89,8 +89,10 @@ def test_page5_is_references_only(pdf):
     p5 = pages[PAGE_LIMIT - 1]
     head = p5.upper().find("REFERENCES")
     ref_page = next((i for i, t in enumerate(pages) if "REFERENCES" in t.upper()), None)
+    # the heading's own section number ("6. REFERENCES") is not body text
+    before_heading = re.sub(r"\d+\.\s*$", "", p5[:head].strip()) if head != -1 else ""
     assert ref_page is not None and ref_page <= PAGE_LIMIT - 1 and (
-        head == -1 or not p5[:head].strip() or ref_page < PAGE_LIMIT - 1), \
+        head == -1 or not before_heading or ref_page < PAGE_LIMIT - 1), \
         (f"page {PAGE_LIMIT} carries body text: the REFERENCES heading is on page "
          f"{None if ref_page is None else ref_page + 1}")
 
@@ -102,3 +104,10 @@ def test_citation_pattern_accepts_locators():
     for group in re.findall(r"\\cite[a-z]*(?:\[[^\]]*\])?\{([^}]*)\}", body(t)):
         cited.update(k.strip() for k in group.split(","))
     assert cited == {"a", "b", "c"}
+
+
+def test_section_number_before_references_is_not_body_text():
+    """Regression: a page 5 that starts with "6. REFERENCES" is references-only."""
+    p5 = "6. REFERENCES\n[1] Lin Zhang, ..."
+    head = p5.upper().find("REFERENCES")
+    assert not re.sub(r"\d+\.\s*$", "", p5[:head].strip())

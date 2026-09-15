@@ -42,6 +42,9 @@ def resolve(art: dict, dotted: str):
 
 def compare(entry: dict, got) -> tuple[bool, str, str]:
     """Return (ok, recomputed-as-printed, how it was compared)."""
+    if isinstance(entry["value"], str) and "/" in entry["value"]:
+        from fractions import Fraction
+        return Fraction(str(got)) == Fraction(entry["value"]), str(got), "exact fraction"
     p = entry["precision"]
     got_f = float(got)
     shown = f"{round(got_f, p):.{p}f}"

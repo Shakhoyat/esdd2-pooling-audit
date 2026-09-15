@@ -39,7 +39,7 @@ MATH_NOTATION = [
     re.compile(r"\u222b\ufe01?\s?1"),                      # integral from 0 to 1
     re.compile(r"\)\s?2(?=\s[A-Z])"),                     # (1 - w)^2 D
     re.compile(r"(?<=\bI )4(?=\s?\.)"),                   # I^4
-    re.compile(r"\u2265\s?12\s?\}"),                       # >= 1/2 }, the fraction typeset as "12"
+    re.compile(r"\u2265\s?12\s?[\})]"),                   # >= 1/2 } or ), the fraction typeset as "12"
 ]
 SECTION_REF = re.compile(r"\u00a7\s?\d+(\.\d+)?")     # section 4.2
 FIGTAB_REF = re.compile(r"(?:Fig\.|Figure|Table|Theorem|Proposition|Eq\.|Section)\s?\d+")
@@ -53,15 +53,45 @@ def pdf_text(pdf: Path) -> str:
     return out.stdout
 
 
-def body_text(raw: str) -> str:
-    """From the abstract to the bibliography.
+def body_text(raw: str, start: str = "ABSTRACT") -> str:
+    """From the abstract to the first bibliography entry.
 
-    The title block carries affiliation marks and the bibliography carries volume
-    and page numbers; neither is a claim.
+    The title block carries affiliation marks and the bibliography carries volume and page
+    numbers; neither is a claim. The end is the first "[1] " entry, not the REFERENCES
+    heading: when a float or a column break reorders the text layer, body text can follow
+    the heading, and cutting at the heading would silently drop it.
     """
-    j = raw.upper().find("ABSTRACT")
-    i = raw.upper().rfind("REFERENCES")
-    return raw[max(j, 0):i if i > 0 else len(raw)]
+    j = raw.upper().find(start.upper())
+    m = re.search(r"(?m)^\[1\] ", raw)
+    end = m.start() if m else len(raw)
+    text = raw[max(j, 0):end]
+    return re.sub(r"(?m)^\s*\d+\.\s+REFERENCES\s*$", " ", text)
+
+
+TFRAC = re.compile(r"\\tfrac\s*(\{\d+\}|\d)\s*(\{\d+\}|\d)")
+
+
+def source_fractions(tex: str) -> set[str]:
+    """Every \\tfrac literal in the LaTeX source, as "num/den"."""
+    strip = lambda g: g.strip("{}")
+    return {f"{strip(a)}/{strip(b)}" for a, b in TFRAC.findall(tex)}
+
+
+def fraction_region(scan: str) -> tuple[int, int]:
+    """Proposition 2's proof in the text layer, where stacked fractions come out as digit runs."""
+    i = scan.find("Proof. Let A, B and S")
+    if i < 0:
+        return (0, 0)
+    j = scan.find("Relation to prior work", i)
+    return (i, j if j > 0 else i)
+
+
+def explained_by_fractions(tok: str, fracs: set[str]) -> bool:
+    digits = set()
+    for f in fracs:
+        n, d = f.split("/")
+        digits |= {n, d, n + d, d + n}
+    return tok in digits or tok in {"0", "1"}
 
 
 def strip_structure(text: str) -> str:
@@ -83,22 +113,38 @@ def main() -> int:
     ap.add_argument("pdf", type=Path)
     ap.add_argument("--yaml", type=Path,
                     default=Path(__file__).parent / "paper_numbers.yaml")
+    ap.add_argument("--document", default="paper", choices=["paper", "extended"],
+                    help="which document's entries direction (a) expects: the paper or PROOFS.pdf")
+    ap.add_argument("--body-start", default="ABSTRACT",
+                    help="text that marks where claims begin (PROOFS.pdf has no abstract)")
+    ap.add_argument("--tex", type=Path, default=Path(__file__).parent / "paper" / "main.tex",
+                    help="LaTeX source, for fractions the text layer cannot show")
     a = ap.parse_args()
     if not a.pdf.exists():
         raise SystemExit(f"not found: {a.pdf}")
 
-    spec = yaml.safe_load(open(a.yaml))["numbers"]
+    doc = yaml.safe_load(open(a.yaml))
+    spec = doc["numbers"]
+    literature = doc.get("meta", {}).get("literature_literals", []) if a.document == "paper" else []
+    tex = a.tex.read_text() if a.tex.exists() else ""
+    fracs = source_fractions(tex)
     raw = pdf_text(a.pdf)
-    body = body_text(raw)
+    body = body_text(raw, a.body_start)
     flat = re.sub(r"\s+", " ", body)
     scan = re.sub(r"\s+", " ", strip_structure(body))
 
     # (a) YAML -> PDF
     missing = []
     for e in spec:
+        if a.document not in e.get("document", ["paper"]):
+            continue          # printed in the other document
         if e.get("printed") is False:
             continue          # a checked quantity the paper does not print as a digit
         v = e["value"]
+        if isinstance(v, str) and "/" in v:     # a \\tfrac: checked in the source, not the text layer
+            if v not in fracs:
+                missing.append((e["id"], v, e["location"]))
+            continue
         s = f"{v:.{e['precision']}f}" if isinstance(v, float) else str(v)
         s_plain = s.lstrip("-")
         # bounded on BOTH sides: "80" must not match inside "0.1580", nor "7" inside "0.7"
@@ -113,13 +159,25 @@ def main() -> int:
     listed = set()
     for e in spec:
         v = e["value"]
+        if isinstance(v, str):
+            continue
         listed.add(f"{v:.{e['precision']}f}".lstrip("-") if isinstance(v, float) else str(v))
         if isinstance(v, int):
             listed.add(f"{v:,}")
+    for lit in literature:                     # dates and counts that trace to a citation
+        if lit["context"] not in flat:
+            missing.append((lit["token"], lit["token"], f"literature: {lit['context']}"))
+        listed.add(lit["token"])
+    unlisted_fracs = fracs - {e["value"] for e in spec if isinstance(e["value"], str)}
+    for f in sorted(unlisted_fracs):
+        missing.append(("(unlisted fraction)", f, "\\tfrac in main.tex with no YAML entry"))
+    r0, r1 = fraction_region(scan)
     unguarded = {}
     for m in re.finditer(r"(?<![\w.])(\d+\.\d+|\d{1,3}(?:,\d{3})+|\d+)(?![\w.])", scan):
         tok = m.group(1)
         if tok in listed:
+            continue
+        if r0 <= m.start() < r1 and explained_by_fractions(tok, fracs):
             continue
         if "." in tok and any(l.startswith(tok) or tok.startswith(l) for l in listed):
             continue

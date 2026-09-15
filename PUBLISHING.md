@@ -65,7 +65,9 @@ is recompiled after the sync check.
       ```bash
       python check_paper_sync.py /path/to/final/main.pdf
       ```
-      Both directions must be **0**: every listed value appears in the PDF, and
+      Rebuild `PROOFS.pdf` from the frozen source and check it too:
+      `python check_paper_sync.py PROOFS.pdf --document extended --tex paper/proofs.tex --body-start "Theorem 1: statement"`.
+      Both directions must be **0**, for both documents: every listed value appears in the PDF, and
       every numeric literal in the PDF is listed. Also run `make verify` (0 failed),
       `make test` (all pass), `ESDD2_PAPER_PDF=/path/to/final/main.pdf make gate`
       (all pass) and `make manifest` (0 problems).

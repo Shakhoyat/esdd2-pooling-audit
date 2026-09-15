@@ -111,6 +111,20 @@ GPU; see `scripts/train/README.md`.
 | our per-clip scores, `data/derived/`, `results/`, Figure 1 and `paper/` | **CC BY-NC 4.0**, `LICENSE-DATA`, with CompSpoofV2 attribution required |
 | CompSpoofV2, the baseline scores | not redistributed |
 
+## PROOFS.pdf — the extended version
+
+The paper is limited to four pages plus references, so Theorem 1's proof there is a sketch and Theorem 3's
+argument is shortened. `PROOFS.pdf` (source `paper/proofs.tex`) carries the full proof of Theorem 1, the full
+argument for Theorem 3, the Lemma and Proposition 2, and the passages the page limit shortened. Every paragraph in it is taken
+verbatim from the paper's source before shortening, with the paper's own equation and section numbers. Its numbers are
+checked like the paper's:
+
+```bash
+python check_paper_sync.py PROOFS.pdf --document extended --tex paper/proofs.tex --body-start "Theorem 1: statement"
+```
+
+Like `paper/`, it is covered by `LICENSE-DATA` (CC BY-NC 4.0).
+
 ## A numerical check is not a proof
 
 Theorems 1 and 2 and Proposition 3 are proved in the paper. This repository does something weaker,
@@ -201,7 +215,8 @@ per-clip scores that produced it.
 verify.py              recompute every number from per-clip scores, compare, exit non-zero on failure
 check_paper_sync.py    paper_numbers.yaml against a compiled PDF, in both directions
 paper_numbers.yaml     every literal: value, precision, location, producing key
-paper/                 the paper source, comments removed, and Figure 1
+paper/                 the paper source, comments removed, Figure 1, and proofs.tex
+PROOFS.pdf             the extended version: full proofs and the passages the page limit shortened
 results/               artefacts.json, table1.tex, table2.tex, fig_pooling.pdf, MANIFEST.json
 src/pooling_audit/     eer, pooling, bounds, sharpness, witness, regimes, sweep, bootstrap, consistency, heads, claims
 scripts/               one per artefact, make_results.py, and tier 1 under train/ and consistency_experiment/

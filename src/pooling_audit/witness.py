@@ -174,3 +174,19 @@ def check(name: str, k: int, dense: bool) -> dict:
     return dict(witness=name, k=k, dense=dense, n_negatives=int(neg.size),
                 pooled_vertices={t: got[t]["n_vertices"] for t in ("A|S", "B|S")},
                 cells=cells, worst_gap=max(c["gap"] for c in cells))
+
+
+def artefacts() -> dict:
+    """Every printed fraction of the witnesses, exact, as strings: the paper's §2 literals."""
+    out = {}
+    for name, w in WITNESSES.items():
+        a, b, s = w["curves"]
+        curves = {"A": a, "B": b, "S": s, "A|S": mix(a, s, HALF), "B|S": mix(b, s, HALF)}
+        out[name] = {
+            "breakpoints": {n: [[str(x), str(y)] for x, y in c.p[1:-1]] for n, c in (("A", a), ("B", b), ("S", s))},
+            "values": {n: dict(EER=str(c.eer()), AUC=str(c.auc()), J=str(c.youden()), minDCF=str(c.mindcf()),
+                               minDCF_asvspoof5=str(c.mindcf(BETA_ASVSPOOF5, F(1))))
+                       for n, c in curves.items()},
+            "concave": all(c.is_valid() for c in curves.values()),
+        }
+    return out

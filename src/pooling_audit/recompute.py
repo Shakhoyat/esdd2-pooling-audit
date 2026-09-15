@@ -11,7 +11,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from . import bounds, data, pooling, regimes, sharpness, sweep
+from . import bounds, cost, data, pooling, regimes, sharpness, sweep, witness
 from .consistency import consistency
 from .bootstrap import clustered_ci
 from .eer import (AXES, component_eer, declared_prior, eer_from_scores,
@@ -359,7 +359,8 @@ def all_artefacts(n_draws: int = 2000, seed: int = 1337) -> dict:
 
     return dict(counts=counts, t1=t1, t2=t2, s2=s2, collap=collap, s3=s3,
                 abl=abl, fmt=fmt, fig1=fig, cons=cons, plan=plan, cfg=cfg, refstep=refstep,
-                settings=settings)
+                settings=settings, cost=cost.asvspoof5_mindcf(), witness=witness.artefacts(),
+                t1_meta=dict(n_rows=len(t1["rows"])))
 
 
 def _ceil_to(x: float, nd: int) -> float:

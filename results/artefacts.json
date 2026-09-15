@@ -185,6 +185,14 @@
    ]
   }
  },
+ "cost": {
+  "beta": 1.9,
+  "component_minDCF": 0.5864902334979794,
+  "pooled_minDCF": 0.9994117647058823,
+  "residual_auc": 0.0,
+  "residual_auc_abs_e15": 0.0,
+  "residual_minDCF": 0.1931193166306151
+ },
  "counts": {
   "eval_clips": 27605,
   "format_matched_applicable": 20150,
@@ -598,6 +606,9 @@
   "twoenc_boundary_distance": 0.026,
   "twoenc_floor_distance": 0.0032
  },
+ "t1_meta": {
+  "n_rows": 5
+ },
  "t2": {
   "ci_level": 95,
   "env": {
@@ -655,6 +666,200 @@
   "threshold_sweep": {
    "0.1": 0.003561875565694761,
    "0.9": 0.00960751840185936
+  }
+ },
+ "witness": {
+  "asvspoof5": {
+   "breakpoints": {
+    "A": [
+     [
+      "1/2",
+      "6/7"
+     ]
+    ],
+    "B": [
+     [
+      "1/8",
+      "5/8"
+     ],
+     [
+      "1/2",
+      "6/7"
+     ]
+    ],
+    "S": [
+     [
+      "1/8",
+      "3/4"
+     ]
+    ]
+   },
+   "concave": true,
+   "values": {
+    "A": {
+     "AUC": "19/28",
+     "EER": "7/19",
+     "J": "5/14",
+     "minDCF": "9/28",
+     "minDCF_asvspoof5": "27/35"
+    },
+    "A|S": {
+     "AUC": "167/224",
+     "EER": "9/28",
+     "J": "5/14",
+     "minDCF": "9/28",
+     "minDCF_asvspoof5": "27/35"
+    },
+    "B": {
+     "AUC": "25/32",
+     "EER": "19/68",
+     "J": "1/2",
+     "minDCF": "1/4",
+     "minDCF_asvspoof5": "27/35"
+    },
+    "B|S": {
+     "AUC": "51/64",
+     "EER": "31/122",
+     "J": "9/16",
+     "minDCF": "7/32",
+     "minDCF_asvspoof5": "23/32"
+    },
+    "S": {
+     "AUC": "13/16",
+     "EER": "2/9",
+     "J": "5/8",
+     "minDCF": "3/16",
+     "minDCF_asvspoof5": "3/5"
+    }
+   }
+  },
+  "dcf_j": {
+   "breakpoints": {
+    "A": [
+     [
+      "1/3",
+      "2/3"
+     ]
+    ],
+    "B": [
+     [
+      "1/6",
+      "1/2"
+     ],
+     [
+      "1/3",
+      "2/3"
+     ]
+    ],
+    "S": [
+     [
+      "1/5",
+      "4/5"
+     ]
+    ]
+   },
+   "concave": true,
+   "values": {
+    "A": {
+     "AUC": "2/3",
+     "EER": "1/3",
+     "J": "1/3",
+     "minDCF": "1/3",
+     "minDCF_asvspoof5": "29/30"
+    },
+    "A|S": {
+     "AUC": "11/15",
+     "EER": "5/17",
+     "J": "5/12",
+     "minDCF": "7/24",
+     "minDCF_asvspoof5": "97/120"
+    },
+    "B": {
+     "AUC": "25/36",
+     "EER": "1/3",
+     "J": "1/3",
+     "minDCF": "1/3",
+     "minDCF_asvspoof5": "29/30"
+    },
+    "B|S": {
+     "AUC": "269/360",
+     "EER": "11/39",
+     "J": "7/15",
+     "minDCF": "4/15",
+     "minDCF_asvspoof5": "97/120"
+    },
+    "S": {
+     "AUC": "4/5",
+     "EER": "1/5",
+     "J": "3/5",
+     "minDCF": "1/5",
+     "minDCF_asvspoof5": "29/50"
+    }
+   }
+  },
+  "eer": {
+   "breakpoints": {
+    "A": [
+     [
+      "2/5",
+      "3/5"
+     ]
+    ],
+    "B": [
+     [
+      "3/11",
+      "1/2"
+     ],
+     [
+      "2/5",
+      "3/5"
+     ]
+    ],
+    "S": [
+     [
+      "2/7",
+      "1"
+     ]
+    ]
+   },
+   "concave": true,
+   "values": {
+    "A": {
+     "AUC": "3/5",
+     "EER": "2/5",
+     "J": "1/5",
+     "minDCF": "2/5",
+     "minDCF_asvspoof5": "1"
+    },
+    "A|S": {
+     "AUC": "51/70",
+     "EER": "2/7",
+     "J": "3/7",
+     "minDCF": "2/7",
+     "minDCF_asvspoof5": "39/50"
+    },
+    "B": {
+     "AUC": "34/55",
+     "EER": "2/5",
+     "J": "5/22",
+     "minDCF": "17/44",
+     "minDCF_asvspoof5": "1"
+    },
+    "B|S": {
+     "AUC": "284/385",
+     "EER": "3/11",
+     "J": "23/49",
+     "minDCF": "13/49",
+     "minDCF_asvspoof5": "184/245"
+    },
+    "S": {
+     "AUC": "6/7",
+     "EER": "2/9",
+     "J": "5/7",
+     "minDCF": "1/7",
+     "minDCF_asvspoof5": "2/7"
+    }
+   }
   }
  }
 }
