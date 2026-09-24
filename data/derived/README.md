@@ -1,7 +1,7 @@
 # Derived metadata
 
 Two small files that let `verify.py` run without the corpus's large archives.
-Both are **derived from CompSpoofV2** and are covered by `../../LICENSE-DATA`
+Both are **derived from CompSpoofV2** and are covered by `../LICENSE-DATA.md`
 (CC BY-NC 4.0, with the CompSpoofV2 attribution required there), not by the MIT
 licence that covers the code.
 

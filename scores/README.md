@@ -18,4 +18,4 @@ twelve files, each holding `filename` and `scores` (n, 2) as [speech, env].
 
 These are model outputs, not audio: about 21 MB in total. They are **keyed by CompSpoofV2 clip
 identifiers** and derived from a CC BY-NC 4.0 corpus, so they are released under **CC BY-NC 4.0**
-(`../LICENSE-DATA`) with CompSpoofV2 attribution required. Their sha256 are in `../MANIFEST.sha256`.
+(`../data/LICENSE-DATA.md`) with CompSpoofV2 attribution required. Their sha256 are in `../MANIFEST.sha256`.

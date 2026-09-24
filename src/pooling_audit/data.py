@@ -133,7 +133,7 @@ def load_published_table() -> pd.DataFrame:
 
 
 def repo_scores_dir() -> Path:
-    """Our own scores ship with the repository; see LICENSE-DATA."""
+    """Our own scores ship with the repository; see data/LICENSE-DATA.md."""
     return REPO / "scores"
 
 

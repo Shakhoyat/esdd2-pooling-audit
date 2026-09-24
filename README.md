@@ -1,5 +1,10 @@
 # esdd2-pooling-audit
 
+[![Code licence: MIT](https://img.shields.io/badge/code%20licence-MIT-blue.svg)](LICENSE)
+[![Data licence: CC BY-NC 4.0](https://img.shields.io/badge/data%20licence-CC%20BY--NC%204.0-lightgrey.svg)](data/LICENSE-DATA.md)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](requirements.txt)
+[![ICASSP 2027: under review](https://img.shields.io/badge/ICASSP%202027-under%20review-orange.svg)](#citation)
+
 Code, per-clip scores and scripts that reproduce every number, table and figure in
 **"Metric Identifiability Under Structural-Zero Pooling in Audio Anti-Spoofing"**
 (submitted to ICASSP 2027, under review).
@@ -116,7 +121,7 @@ GPU; see `scripts/train/README.md`.
 | what | licence |
 |---|---|
 | code: `src/`, `scripts/`, `tests/`, `tools/`, `models/`, `verify.py`, `check_paper_sync.py` | **MIT**, `LICENSE` |
-| our per-clip scores, `data/derived/`, `results/` and the figures | **CC BY-NC 4.0**, `LICENSE-DATA`, with CompSpoofV2 attribution required |
+| our per-clip scores, `data/derived/`, `results/` and the figures | **CC BY-NC 4.0**, `data/LICENSE-DATA.md`, with CompSpoofV2 attribution required |
 | CompSpoofV2, the baseline scores | not redistributed |
 
 ## A numerical check is not a proof

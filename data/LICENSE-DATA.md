@@ -1,6 +1,6 @@
 # Licence for the data in this repository
 
-The MIT licence in `LICENSE` covers the **code** only. The artefacts below are
+The MIT licence in `../LICENSE` covers the **code** only. The artefacts below are
 model outputs derived from a non-commercially licensed corpus, and carry the
 corpus's terms forward.
 
@@ -38,4 +38,4 @@ obligation passes to anyone using these derived scores.
 
 The CompSpoofV2 audio and labels, and the ESDD2 baseline's `prediction.txt`, are
 **not redistributed**. They are fetched by `tools/fetch_data.py`, which verifies
-a sha256 for each file. See `data/README.md`.
+a sha256 for each file. See `README.md` in this directory.

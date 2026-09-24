@@ -4,7 +4,7 @@
     python tools/derive_metadata.py --from-local /path/to/CompSpoofV2 --write
 
 The two files ship in data/derived/ (approved by the authors, CC BY-NC 4.0 under
-LICENSE-DATA). This tool REGENERATES them from the archives into build/derived/, so
+data/LICENSE-DATA.md). This tool REGENERATES them from the archives into build/derived/, so
 you can confirm the shipped copies byte for byte:
 
     sha256sum build/derived/*.csv
