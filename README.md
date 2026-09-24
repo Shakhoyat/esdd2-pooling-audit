@@ -256,4 +256,4 @@ This entry will be updated if the paper is accepted.
 ## Contact
 
 Questions and issues: please open a GitHub issue, or email Md. Shakhoyat Rahman Shujon
-(skt104.shujon@gmail.com).
+(skt104.shujon@gmail.com), Khadimul Islam Mahi (mahi.jess9t9@gmail.com).
