@@ -1,0 +1,7 @@
+# Hashes in MANIFEST.sha256 and results/MANIFEST.json are taken over LF files,
+# so check out text with LF on every platform.
+* text=auto eol=lf
+*.npz binary
+*.pdf binary
+# Written by Python's csv module (CRLF rows); stored byte-for-byte so their sha256 holds.
+*.csv -text

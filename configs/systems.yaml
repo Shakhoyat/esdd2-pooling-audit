@@ -1,0 +1,56 @@
+# Frozen-encoder layer sets and audio conventions.
+#
+# These are the values the tier-1 code reads, and the values verify.py checks the
+# paper's layer references and §4.1 sampling rate against, so the paper and
+# the code cannot drift apart silently.
+#
+# Layers were selected ONCE on a generator holdout and are fixed here. A tier-1
+# rerun reproduces the reported systems; it does not reselect.
+
+audio:
+  sample_rate_khz: 16        # every system resamples to this
+  channels: 1                # mono
+
+systems:
+  beats_linear:     {encoder: beats, layers: [7, 8, 9, 10], head: linear}
+  eat_linear:       {encoder: eat,   layers: [4, 5, 6, 7, 8], head: linear}
+  sslam_linear:     {encoder: sslam, layers: [4, 5, 6, 7, 8], head: linear}
+  xlsr_linear:      {encoder: xlsr,  layers: [3, 4, 5, 6, 7], head: linear}
+  beats_attentive:  {encoder: beats, layers: [7, 8, 9, 10], head: attentive}
+  two_encoder:
+    head: linear
+    env_branch:     {encoder: beats, layers: [7, 8, 9, 10]}
+    speech_branch:  {encoder: xlsr,  layers: [3, 4, 5, 6, 7]}
+
+# The supplementary consistency experiment's two feature configurations.
+consistency_configs:
+  layer7:       {encoder: beats, layers: [7]}
+  layers7to10:  {encoder: beats, layers: [7, 8, 9, 10]}
+
+seeds: [1337, 1338, 1339]
+
+# Optimisation, ported verbatim from the scripts that produced the paper's
+# scores. verify.py checks the layer sets and the sampling rate above against
+# the paper; these settings are here so a rerun cannot silently differ.
+training:
+  probe:                       # the five-class linear probes of Table 1
+    steps: 3000
+    lr: 0.003
+    weight_decay: 0.0001
+    batch: 4096
+    optimiser: adamw
+  component_heads:             # the two-head model of the consistency-experiment arms
+    steps: 3000
+    lr: 0.003
+    weight_decay: 0.0001
+    batch: 4096
+    optimiser: adamw
+    scheduler: cosine
+    hidden: 256
+    embed: 128
+    dropout: 0.1
+    # The ONLY difference between the arms. M masks the inapplicable clips out
+    # of both component losses; C supervises them, per the protocol's Table I.
+    arms:
+      M: {component_loss_mask: is_mixture}
+      C: {component_loss_mask: all}

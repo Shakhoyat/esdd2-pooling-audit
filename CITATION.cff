@@ -1,0 +1,42 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite the paper below."
+title: "esdd2-pooling-audit: reproduction code for metric identifiability under structural-zero pooling"
+type: software
+license: MIT
+repository-code: "https://github.com/Shakhoyat/esdd2-pooling-audit"
+abstract: >-
+  Recomputes every numeric claim in "Metric Identifiability Under
+  Structural-Zero Pooling in Audio Anti-Spoofing" from per-clip scores,
+  without reading any cached result.
+preferred-citation:
+  type: conference-paper
+  title: "Metric Identifiability Under Structural-Zero Pooling in Audio Anti-Spoofing"
+  year: 2026
+  status: submitted
+  notes: "Submitted to IEEE ICASSP 2027; under review."
+  authors:
+    - family-names: Rahman Shujon
+      given-names: "Md. Shakhoyat"
+    - family-names: Mahi
+      given-names: "Khadimul Islam"
+    - family-names: Islam
+      given-names: "Md. Milon"
+    - family-names: Haque
+      given-names: "Md Rezwanul"
+    - family-names: Altaheri
+      given-names: Hamdi
+    - family-names: Karray
+      given-names: Fakhri
+authors:
+  - family-names: Rahman Shujon
+    given-names: "Md. Shakhoyat"
+  - family-names: Mahi
+    given-names: "Khadimul Islam"
+  - family-names: Islam
+    given-names: "Md. Milon"
+  - family-names: Haque
+    given-names: "Md Rezwanul"
+  - family-names: Altaheri
+    given-names: Hamdi
+  - family-names: Karray
+    given-names: Fakhri

@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+data/local/
+*.npy
+*.parquet
+build/
+models/checkpoints/
+# The paper is under review and is not distributed here. Keep any local copy,
+# its build and the ICASSP template out of the repository.
+paper/
+*.aux
+*.log
+*.out
+*.synctex.gz
+

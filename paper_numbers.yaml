@@ -1,0 +1,194 @@
+# Every numeric literal printed in the paper, with where it comes from.
+#
+# `value` is TRANSCRIBED BY HAND from main.tex at the precision the paper prints.
+# It is deliberately NOT generated from our code: verify.py recomputes each one
+# from per-clip scores and compares, so a generated file would make the check
+# vacuous.
+#
+# tier 0            recomputable on CPU from per-clip scores; verify.py checks it
+# tier 0-published  fixed by a published table, not recomputable without test labels
+#
+# `key` is a dotted path into the artefacts recompute.py returns.
+# `printed: false`  a checked quantity the paper states in words or as a bound
+#                   ("none", "fourteen", "to 10^-12") rather than as the digit.
+# Entries are in reading order. A value printed in several places has one entry
+# per place, so a change in one place cannot hide behind another.
+
+meta:
+  reference_step_bootstrap: {scheme: class-stratified clip, draws: 1000, seed: 1337}
+  bootstrap_seed: 1337        # pinned; the intervals are reproducible only at this seed
+  bootstrap_draws: 2000
+  paper: "Metric Identifiability Under Structural-Zero Pooling in Audio Anti-Spoofing"
+  transcribed_from: "paper/main.tex"
+  # Tick labels on the figures' axes, plus a few structural digits the strip_structure() regexes
+  # don't catch (subscript notation P_0/P_a losing its subscript in the text layer, the "Class 0"
+  # category name, set notation {0,1}, and "ACDS(1,1)"). Not claims, but they are digits in the
+  # text layer, so they are declared here rather than left to a loophole (an earlier prefix
+  # rule hid them).
+  figure_literals:
+    - {token: "0", context: "structural: subscript P_0 losing its subscript in the text layer, and the 'Class 0' category name (repeated)"}
+    - {token: "1", context: "structural: set notation {0,1} in Definition 1, and 'ACDS(1,1)' in Fig. 2's legend"}
+    - {token: "2", context: "§4.4: the ranking is unchanged up to alpha_0 = 2 -- declared, not independently
+       recomputed: no script here sweeps alpha_0 past the last crossing (0.125, tracked as
+       s44a_cross) to confirm no further crossing occurs before 2"}
+    - {token: "0.25", context: "Fig. 1 x-axis tick label"}
+    - {token: "0.75", context: "Fig. 1 x-axis tick label"}
+    - {token: "0.9",  context: "Fig. 3 y-axis tick label"}
+    - {token: "0.8",  context: "Fig. 3 y-axis tick label"}
+    - {token: "0.7",  context: "Fig. 3 y-axis tick label"}
+    - {token: "0.6",  context: "Fig. 3 y-axis tick label"}
+    - {token: "0.5",  context: "Fig. 3 y-axis tick label"}
+    - {token: "0.4",  context: "Fig. 3 y-axis tick label"}
+    - {token: "0.00", context: "Fig. 3 x-axis tick label"}
+    - {token: "0.05", context: "Fig. 3 x-axis tick label"}
+    - {token: "0.10", context: "Fig. 3 x-axis tick label"}
+    - {token: "0.15", context: "Fig. 3 x-axis tick label"}
+    - {token: "0.89", context: "Fig. 3 inset y-axis tick label"}
+    - {token: "0.88", context: "Fig. 3 inset y-axis tick label"}
+    - {token: "0.87", context: "Fig. 3 inset y-axis tick label"}
+    - {token: "0.100", context: "Fig. 3 inset x-axis tick label"}
+    - {token: "0.125", context: "Fig. 3 inset x-axis tick label"}
+    - {token: "0.150", context: "Fig. 3 inset x-axis tick label"}
+  transcribed_on: "2026-09-20"
+  audited_on: "2026-09-24 (against the submitted text: independent theorem/lemma/proposition/definition
+    counters; the Abstract and §1 carry no digits)"
+
+numbers:
+
+# ---------------------------------------------------------------- Section 2
+# The Abstract and §1 Introduction, as submitted, state every result in words with no digit;
+# there is nothing to transcribe from them. §2.1 (the pooling model) and §2.2 (collapsibility,
+# Theorem 1 / Lemma 1 / Proposition 1) likewise carry no printed digit: Proposition 1's
+# counterexample proof, which is where the fractional breakpoints live, is commented out of
+# the submitted source (visible in paper/main.tex, invisible in the compiled PDF), and the
+# collapsibility residual bounds are stated as "negligible" / "non-negligible", not as digits.
+# §2.2 also says "for both components of five systems" -- not tracked here as a digit claim,
+# because collap.n_systems (s2_collapsibility()) is 7 (COLLAPSIBILITY_SYSTEMS: the four Table 1
+# probes, sslam_linear and xlsr_linear, plus the baseline), a superset of the five systems the
+# submitted paper actually reports. The claim is true of that superset and therefore of the five
+# (negligible residual on 7 systems implies it on any 5 of them), but "five" itself is not a value
+# collap.n_systems can be checked against without a second, five-only computation that does not
+# currently exist.
+- {id: s2_containment,    value: 0.0,    precision: 1, location: "§2.3 Theorem 2: containment checked in the released code", tier: 0, key: s2.sharpness.containment.worst_violation, compare: bound_below, printed: false,
+   why: "stated in words ('the released code constructs an admissible system that matches both EERs within numerical precision'); checked as zero violations over random admissible systems"}
+- {id: s2_attainment,     value: 1.0,    precision: 1, location: "§2.3 Theorem 2: every sampled value attained", tier: 0, key: s2.sharpness.attainment.worst_e12, compare: bound_below, printed: false,
+   why: "stated in words, not as a bound digit; checked as worst crossing residual x 1e12 <= 1"}
+- {id: s2_witness_pooled, value: 0.4336, precision: 4, location: "§2.3: the released code's admissible system matches the ESDD2 baseline's published pooled EER", tier: 0, key: s2.sharpness.witness.pooled, printed: false,
+   why: "the paper says the released code constructs a matching admissible system; this is the published value it reproduces"}
+- {id: s2_witness_comp,   value: 0.0000, precision: 4, location: "§2.3: the same witness at the lower endpoint of the identified interval", tier: 0, key: s2.sharpness.witness.component_only, printed: false,
+   why: "the lower endpoint that witness sits at, given w_0=0.5323 and the published 0.4336"}
+
+# ---------------------------------------------------------------- Section 3 (Applicability-conditioned evaluation)
+# §3.1-3.3 (the three-population model, the AC curve and ACDS itself, Definitions 1-3) are pure
+# definitions and carry no worked numeric example. Proposition 2 (§3.4, properties of ACDS) and
+# Proposition 3 (§3.4, predicted applicability) are algebraic identities, stated without digits.
+
+# ---------------------------------------------------------------- Figure 2 (the ACDS mechanism)
+# The figure is pgf, so its labels are real text in the PDF and pdftotext reads them. Its three
+# areas are the three terms of Definition 3 at t_max = 1, read straight down the legend.
+- {id: fig2_area_roc,     value: 0.8740, precision: 4, location: "Fig. 2 legend, area under ROC_a (= AUC_a)", tier: 0, key: "acds.rows.reference.(0,1)"}
+- {id: fig2_area_r0,      value: 0.7130, precision: 4, location: "Fig. 2 legend, area under alpha_0 R_0 (= alpha_0(1-AUC_0))", tier: 0, key: acds.aucs.reference.alarm_area}
+- {id: fig2_area_ac,      value: 0.1611, precision: 4, location: "Fig. 2 legend, area under AC (= ACDS(1,1))", tier: 0, key: "acds.rows.reference.(1,1)"}
+
+# ---------------------------------------------------------------- Section 4.1 (Experimental setup)
+- {id: s41_step_gap,      value: 4,      precision: 0, location: "§4.1 trapezoidal vs step rule, at most 4e-4", tier: 0, key: acds.worst_step_gap_e4, compare: bound_below,
+   why: "printed as the bound 4 x 10^-4; checked as the worst gap x 1e4 <= 4"}
+- {id: s41_eval,          value: 27605,  precision: 0, location: "§4.1 evaluation clips", tier: 0, key: counts.eval_clips}
+- {id: s41_sr,            value: 16,     precision: 0, location: "§4.1 kHz", tier: 0, key: cfg.sample_rate_khz}
+- {id: s41_seeds,         value: 3,      precision: 0, location: "§4.1 three random seeds", tier: 0, key: settings.n_seeds, printed: false,
+   why: "spelled as a word in the paper"}
+
+# ---------------------------------------------------------------- Table 1 caption
+- {id: t1_max_sd,         value: 0.0015, precision: 4, location: "Table 1 caption, seed s.d. bound", tier: 0, key: t1.max_seed_sd_excl_attentive_ceil, printed: false,
+   why: "internal check backing 'mean over three random seeds'; not itself a printed digit"}
+
+# ---------------------------------------------------------------- Table 1 header and body
+- {id: t1_head_c_mid,     value: 0.5,    precision: 1, location: "§4.2 the constant c=0.5", tier: 0, key: settings.c_mid}
+- {id: t1_beats_c0,       value: 0.5382, precision: 4, location: "Abstract / §4.2, BEATs Linear at c=0", tier: 0, key: t1.rows.beats_linear.mean.0}
+- {id: t1_beats_c05,      value: 0.1412, precision: 4, location: "Abstract / §4.2, BEATs Linear at c=0.5", tier: 0, key: t1.rows.beats_linear.mean.0.5}
+- {id: t1_beats_spread,   value: 0.3970, precision: 4, location: "§4.2 / Table 1 caption, BEATs Linear spread", tier: 0, key: t1.rows.beats_linear.spread}
+- {id: t1_eat_c0,         value: 0.5400, precision: 4, location: "§4.2, EAT Linear at c=0", tier: 0, key: t1.rows.eat_linear.mean.0}
+- {id: t1_ref_comp,       value: 0.2090, precision: 4, location: "§4.3, ESDD2 baseline component-only environmental EER", tier: 0, key: t1.rows.reference.component_only}
+
+# ---------------------------------------------------------------- Table 1 (ACDS), every cell
+# Twenty cells: four settings of (alpha_0, t_max) across five systems, means over three seeds
+# except the ESDD2 baseline, which is one released submission.
+- {id: t1a_beats_01,      value: 0.9240, precision: 4, location: "Table 1, BEATs Linear (0,1)", tier: 0, key: "acds.rows.beats_linear.(0,1)"}
+- {id: t1a_beats_11,      value: 0.9169, precision: 4, location: "Table 1, BEATs Linear (1,1)", tier: 0, key: "acds.rows.beats_linear.(1,1)"}
+- {id: t1a_beats_02,      value: 0.7032, precision: 4, location: "Table 1, BEATs Linear (0,0.2)", tier: 0, key: "acds.rows.beats_linear.(0,0.2)"}
+- {id: t1a_beats_w,       value: 0.9159, precision: 4, location: "Table 1, BEATs Linear (w0/wa,1)", tier: 0, key: "acds.rows.beats_linear.(w0/wa,1)"}
+- {id: t1a_eat_01,        value: 0.8859, precision: 4, location: "Table 1, EAT Linear (0,1)", tier: 0, key: "acds.rows.eat_linear.(0,1)"}
+- {id: t1a_eat_11,        value: 0.8487, precision: 4, location: "Table 1, EAT Linear (1,1)", tier: 0, key: "acds.rows.eat_linear.(1,1)"}
+- {id: t1a_eat_02,        value: 0.5522, precision: 4, location: "Table 1, EAT Linear (0,0.2)", tier: 0, key: "acds.rows.eat_linear.(0,0.2)"}
+- {id: t1a_eat_w,         value: 0.8435, precision: 4, location: "Table 1, EAT Linear (w0/wa,1)", tier: 0, key: "acds.rows.eat_linear.(w0/wa,1)"}
+- {id: t1a_attn_01,       value: 0.9248, precision: 4, location: "Table 1, BEATs Attentive (0,1)", tier: 0, key: "acds.rows.beats_attentive.(0,1)"}
+- {id: t1a_attn_11,       value: 0.5760, precision: 4, location: "Table 1, BEATs Attentive (1,1)", tier: 0, key: "acds.rows.beats_attentive.(1,1)"}
+- {id: t1a_attn_02,       value: 0.7081, precision: 4, location: "Table 1, BEATs Attentive (0,0.2)", tier: 0, key: "acds.rows.beats_attentive.(0,0.2)"}
+- {id: t1a_attn_w,        value: 0.5278, precision: 4, location: "Table 1, BEATs Attentive (w0/wa,1)", tier: 0, key: "acds.rows.beats_attentive.(w0/wa,1)"}
+- {id: t1a_twoenc_01,     value: 0.9268, precision: 4, location: "Table 1, BEATs + XLS-R (0,1)", tier: 0, key: "acds.rows.two_encoder.(0,1)"}
+- {id: t1a_twoenc_11,     value: 0.5544, precision: 4, location: "Table 1, BEATs + XLS-R (1,1)", tier: 0, key: "acds.rows.two_encoder.(1,1)"}
+- {id: t1a_twoenc_02,     value: 0.7465, precision: 4, location: "Table 1, BEATs + XLS-R (0,0.2)", tier: 0, key: "acds.rows.two_encoder.(0,0.2)"}
+- {id: t1a_twoenc_w,      value: 0.5030, precision: 4, location: "Table 1, BEATs + XLS-R (w0/wa,1)", tier: 0, key: "acds.rows.two_encoder.(w0/wa,1)"}
+- {id: t1a_ref_01,        value: 0.8740, precision: 4, location: "Table 1, ESDD2 baseline (0,1)", tier: 0, key: "acds.rows.reference.(0,1)"}
+- {id: t1a_ref_11,        value: 0.1611, precision: 4, location: "Table 1, ESDD2 baseline (1,1)", tier: 0, key: "acds.rows.reference.(1,1)"}
+- {id: t1a_ref_02,        value: 0.6526, precision: 4, location: "Table 1, ESDD2 baseline (0,0.2)", tier: 0, key: "acds.rows.reference.(0,0.2)"}
+- {id: t1a_ref_w,         value: 0.0626, precision: 4, location: "Table 1, ESDD2 baseline (w0/wa,1)", tier: 0, key: "acds.rows.reference.(w0/wa,1)"}
+- {id: t1a_tmax,          value: 0.2,    precision: 1, location: "Table 1, t_max = 0.2 row", tier: 0, key: acds.tmax_short}
+- {id: t1a_identity,      value: 1.0,    precision: 1, location: "§4.4 both invariance properties hold within 1e-15", tier: 0, key: acds.identity_residual_e15, compare: bound_below, printed: false,
+   why: "printed as the bound 10^-15; checked as the worst identity residual x 1e15 <= 1"}
+
+# ---------------------------------------------------------------- Section 4.2 (sensitivity to the structural-zero score)
+- {id: s42_spread_max,    value: 0.3970, precision: 4, location: "§4.2 varies by up to", tier: 0, key: t1.spread_max}
+- {id: s42_beats_c0,      value: 0.5382, precision: 4, location: "§4.2 BEATs Linear at c=0", tier: 0, key: t1.rows.beats_linear.mean.0}
+- {id: s42_eat_c0,        value: 0.5400, precision: 4, location: "§4.2 EAT Linear at c=0", tier: 0, key: t1.rows.eat_linear.mean.0}
+- {id: s42_c_mid,         value: 0.5,    precision: 1, location: "§4.2 probability-valued c=0.5", tier: 0, key: settings.c_mid}
+- {id: s42_twoenc_bound,  value: 0.026,  precision: 3, location: "§4.2 BEATs + XLS-R boundary distance", tier: 0, key: t1.twoenc_boundary_distance}
+- {id: s42_mindcf_pooled, value: 0.9994, precision: 4, location: "§4.2 pooled minDCF at ASVspoof 5 costs", tier: 0, key: cost.pooled_minDCF}
+- {id: s42_mindcf_comp,   value: 0.5865, precision: 4, location: "§4.2 component-only (P_a) minDCF at ASVspoof 5 costs", tier: 0, key: cost.component_minDCF}
+- {id: s42_mindcf_resid,  value: 0.19,   precision: 2, location: "§4.2 minDCF residual against the weighted mean", tier: 0, key: cost.residual_minDCF}
+- {id: s42_auc_resid,     value: 1.0,    precision: 1, location: "§4.2 every area residual below 1e-15", tier: 0, key: cost.residual_auc_abs_e15, compare: bound_below, printed: false,
+   why: "printed as the bound 10^-15"}
+
+# ---------------------------------------------------------------- Section 4.3 (acoustic difficulty vs. pooling effect)
+- {id: s43_env_comp,      value: 0.2090, precision: 4, location: "§4.3 environmental component-only EER", tier: 0, key: abl.env.component_only}
+- {id: s43_speech_comp,   value: 0.1906, precision: 4, location: "§4.3 speech component-only EER", tier: 0, key: abl.speech.component_only}
+- {id: s43_env_dist,      value: 0.2246, precision: 4, location: "§4.3 environmental EER increase from structural zeros", tier: 0, key: abl.env.distortion}
+- {id: s43_speech_dist,   value: 0.0087, precision: 4, location: "§4.3 speech EER increase from structural zeros", tier: 0, key: abl.speech.distortion}
+- {id: s43_total,         value: 0.2343, precision: 4, location: "§4.3 reported gap", tier: 0, key: abl.decomposition.total}
+- {id: s43_pooling_net,   value: 0.2159, precision: 4, location: "§4.3 pooling explains, of the gap", tier: 0, key: abl.decomposition.pooling_net}
+- {id: s43_pooling_pct,   value: 92,     precision: 0, location: "§4.3 pooling share of the gap (92%)", tier: 0, key: abl.decomposition.pooling_pct, compare: bound_above_reversed,
+   why: "the paper prints '(92%)'; the measured share is 92.14"}
+
+# ---------------------------------------------------------------- Section 4.4 (evaluation under ACDS)
+- {id: s44a_cross,        value: 0.125,  precision: 3, location: "§4.4 ranking changes from alpha_0 = 0.125 onward", tier: 0, key: acds.last_crossing}
+- {id: s44a_cross_again,  value: 0.125,  precision: 3, location: "§4.4 / Fig. 3 caption, all five intersections occur below", tier: 0, key: acds.last_crossing}
+- {id: s44a_w0_over_wa,   value: 1.138,  precision: 3, location: "§4.4 the ESDD2 protocol cost w0/wa", tier: 0, key: acds.w0_over_wa}
+- {id: s44a_span01,       value: 0.053,  precision: 3, location: "§4.4 ACDS(0,1) range", tier: 0, key: acds.span_acds01}
+- {id: s44a_span_alarm,   value: 0.706,  precision: 3, location: "§4.4 1 - AUC_0 range", tier: 0, key: acds.span_alarm}
+- {id: s44a_eat_02,       value: 0.5522, precision: 4, location: "§4.4 EAT Linear at t_max = 0.2", tier: 0, key: "acds.rows.eat_linear.(0,0.2)"}
+- {id: s44a_ref_02,       value: 0.6526, precision: 4, location: "§4.4 ESDD2 baseline at t_max = 0.2", tier: 0, key: "acds.rows.reference.(0,0.2)"}
+- {id: s44a_n_cross,      value: 5,      precision: 0, location: "§4.4 all five environmental crossings", tier: 0, key: acds.n_crossings, printed: false,
+   why: "spelled as a word in the paper"}
+
+# ---------------------------------------------------------------- Section 4.5 (predicted applicability)
+- {id: s45_gate_threshold, value: 0.5,   precision: 1, location: "§4.5 thresholding gamma at 1/2", tier: 0, key: settings.gate_threshold, printed: false,
+   why: "typeset as the fraction 1/2"}
+- {id: s45_lam_env,       value: 0.0026, precision: 4, location: "§4.5 contamination rate, environmental", tier: 0, key: acdsg.env.lam}
+- {id: s45_lam_sp,        value: 0.0015, precision: 4, location: "§4.5 contamination rate, speech", tier: 0, key: acdsg.speech.lam}
+- {id: s45_eer_gated_env, value: 0.2028, precision: 4, location: "§4.5 gated EER, environmental", tier: 0, key: acdsg.env.eer_gated}
+- {id: s45_eer_gated_sp,  value: 0.1892, precision: 4, location: "§4.5 gated EER, speech", tier: 0, key: acdsg.speech.eer_gated}
+- {id: s45_eer_ann_env,   value: 0.2090, precision: 4, location: "§4.5 component-only EER, environmental", tier: 0, key: acdsg.env.eer_annotated}
+- {id: s45_eer_ann_sp,    value: 0.1906, precision: 4, location: "§4.5 component-only EER, speech", tier: 0, key: acdsg.speech.eer_annotated}
+- {id: s45_err_gated_env, value: 0.0062, precision: 4, location: "§4.5 gated EER absolute error, environmental", tier: 0, key: acdsg.env.err_gated_eer}
+- {id: s45_err_gated_sp,  value: 0.0013, precision: 4, location: "§4.5 gated EER absolute error, speech", tier: 0, key: acdsg.speech.err_gated_eer}
+- {id: s45_pooled_env,    value: 0.4336, precision: 4, location: "§4.5 pooled EER, environmental", tier: 0, key: acdsg.env.eer_pooled}
+- {id: s45_pooled_sp,     value: 0.1993, precision: 4, location: "§4.5 pooled EER, speech", tier: 0, key: acdsg.speech.eer_pooled}
+- {id: s45_err_pool_env,  value: 0.2246, precision: 4, location: "§4.5 pooled EER error, environmental", tier: 0, key: acdsg.env.err_pooled_eer}
+- {id: s45_err_pool_sp,   value: 0.0087, precision: 4, location: "§4.5 pooled EER error, speech", tier: 0, key: acdsg.speech.err_pooled_eer}
+- {id: s45_acds_err_env,  value: 0.0050, precision: 4, location: "§4.5 ACDS(0,1) error under the gate, environmental", tier: 0, key: acdsg.env.abs_error_gated}
+- {id: s45_acds_err_sp,   value: 0.0006, precision: 4, location: "§4.5 ACDS(0,1) error under the gate, speech", tier: 0, key: acdsg.speech.abs_error_gated}
+- {id: s45_rho_env,       value: 0.0734, precision: 4, location: "§4.5 fraction of P_a excluded, environmental", tier: 0, key: acdsg.env.rho}
+- {id: s45_rho_sp,        value: 0.0565, precision: 4, location: "§4.5 fraction of P_a excluded, speech", tier: 0, key: acdsg.speech.rho}
+- {id: s45_corrected_env, value: 0.0066, precision: 4, location: "§4.5 error after correcting only for contamination, environmental", tier: 0, key: acdsg.env.abs_error_corrected}
+
+# no Section 5 entries: the submitted conclusion states its results in words, with no digit.
